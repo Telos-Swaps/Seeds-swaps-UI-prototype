@@ -252,7 +252,7 @@ export class UsdBancorModule
           console.warn("Failed to find name", token.symbol);
           name = token.symbol;
           logo =
-            "https://raw.githubusercontent.com/Telos-Swaps/TLOSD/master/icons/placeholder.jpg";
+            "https://raw.githubusercontent.com/Telos-Swaps/Seeds-swaps-UI-prototype/master/tokens/icons/placeholder.jpg";
         }
 
         const baseToken: BaseToken = {
