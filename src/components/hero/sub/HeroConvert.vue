@@ -139,24 +139,11 @@ const addDefaultQueryParams = (to: Route): any => {
   switch (to.params.service) {
     case "tlos":
       return appendBaseQuoteQuery(
-        buildTokenId({ contract: "eosio.token", symbol: "TLOS" }),
-        buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" }),
+        buildTokenId({ contract: "token.seeds", symbol: "SEEDS" }),
+        buildTokenId({ contract: "token.hypha", symbol: "HYPHA" }),
         to
       );
 
-    case "usds":
-      return appendBaseQuoteQuery(
-        buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" }),
-        buildTokenId({ contract: "tokens.swaps", symbol: "USDT" }),
-        to
-      );
-
-    case "xchain":
-      return appendBaseQuoteQuery(
-        buildTokenId({ contract: "tokens.swaps", symbol: "USDT" }),
-        buildTokenId({ contract: "tokens.swaps", symbol: "EOSDT" }),
-        to
-      );
     default:
       throw new Error("Unrecognised service!");
   }

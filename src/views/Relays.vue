@@ -108,16 +108,8 @@
                     :disabled="!data.item.addLiquiditySupported"
                     size="sm"
                     variant="info"
-                    class="mr-1"
                   >
                     <font-awesome-icon icon="plus" />
-                  </b-btn>
-                  <b-btn
-                    size="sm"
-                    variant="secondary"
-                    class="ml-1"
-                  >
-                    <font-awesome-icon icon="info" />
                   </b-btn>
                 </div>
               </template>

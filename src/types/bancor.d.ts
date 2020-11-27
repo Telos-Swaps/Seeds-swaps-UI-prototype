@@ -1,5 +1,3 @@
-import { Tokens, Token } from "@/api/telosd";
-
 export interface TokenPrice {
   id: string;
   code: string;
@@ -8,11 +6,9 @@ export interface TokenPrice {
   primaryCommunityImageName: string;
   liquidityDepth: number;
   price: number;
-//  priceTlos: number;
   change24h: number;
   volume24h: Volume24h;
   smartPriceApr: number;
-//  priceHistory: PriceHistory[];
 }
 
 export interface Volume24h {
@@ -481,19 +477,10 @@ export interface Settings {
 export enum Feature {
   Trade,
   Wallet,
-  Liquidity,
-  Bridge
+  Liquidity
 }
 
 export interface Service {
   namespace: string;
   features: Feature[];
-}
-
-export interface ModulePool extends Token {
-  volume24h: number;
-}
-
-export interface ModulePools {
-  [symcode: string]: ModulePool;
 }

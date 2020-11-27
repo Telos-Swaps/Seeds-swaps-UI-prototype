@@ -137,6 +137,7 @@ const compareEosTokenSymbol = (
 const reservesIncludeTokenMetaDry = (tokenMeta: TokenMeta[]) => (
   relay: DryRelay
 ) => {
+  console.log("reservesIncludeTokenMetaDry",relay.reserves,tokenMeta);
   const status = relay.reserves.every(reserve =>
     tokenMeta.some(
       meta =>
@@ -218,8 +219,7 @@ const noBlackListedReserves = (blackListedTokens: BaseToken[]) => (
   );
 
 const mandatoryNetworkTokens: BaseToken[] = [
-  { contract: "eosio.token", symbol: "TLOS" }
-//  { contract: "tokens.swaps", symbol: "TLOSD" }
+  { contract: "token.seeds", symbol: "SEEDS" }
 ];
 
 const isBaseToken = (token: BaseToken) => (comparasion: BaseToken): boolean =>
@@ -605,26 +605,16 @@ export class TlosBancorModule
   }
 
   get newNetworkTokenChoices(): NetworkChoice[] {
-    const tlos: BaseToken = {
-      symbol: "TLOS",
-      contract: "eosio.token"
-    };
-
-    const tlosd: BaseToken = {
-      symbol: "TLOSD",
-      contract: "tokens.swaps"
+    const seeds: BaseToken = {
+      symbol: "SEEDS",
+      contract: "token.seeds"
     };
 
     return [
       {
-        ...tlos,
-        id: buildTokenId(tlos),
+        ...seeds,
+        id: buildTokenId(seeds),
         usdValue: this.usdPriceOfTlos
-      },
-      {
-        ...tlosd,
-        id: buildTokenId(tlosd),
-        usdValue: 1
       }
     ].map(choice => ({
       ...choice,
@@ -1231,6 +1221,7 @@ export class TlosBancorModule
   @action async buildPossibleRelayFeedsFromHydrated(relays: EosMultiRelay[]) {
     const feeds = relays.flatMap(relay =>
       buildTwoFeedsFromRelay(relay, [
+        { symbol: "SEEDS", unitPrice: 0.02 },
         { symbol: "TLOSD", unitPrice: 1 },
         { symbol: "TLOS", unitPrice: this.usdPriceOfTlos }
       ])
@@ -1287,7 +1278,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
       const [tokenPrices] = await Promise.all([fetchTradeData()]);
 
       const tlosToken = findOrThrow(tokenPrices, token =>
-        compareString(token.code, "TLOS")
+        compareString(token.code, "SEEDS")
       );
 
       const relayFeeds: RelayFeed[] = relays.flatMap(relay => {
@@ -1307,7 +1298,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
 
         const includeTLOS = compareString(
           secondaryReserve.symbol.code().to_string(),
-          "TLOS"
+          "SEEDS"
         );
 
         // const liqDepth = token.liquidityDepth * usdPriceOfEth * 2;

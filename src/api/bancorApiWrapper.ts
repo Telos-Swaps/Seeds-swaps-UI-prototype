@@ -80,9 +80,10 @@ export class BancorApi implements BancorWrapper {
   }
 
   public async convert(payload: ConvertPayload) {
+    console.log("convert",payload);
     const final = {
       ...payload,
-      blockchainType: this.blockchain == Blockchain.TLOS ? "tlos" : "ethereum",
+      blockchainType: "tlos",
       ...(this.blockchain == Blockchain.TLOS && { format: "json" })
     };
     const res = await this.post("currencies/convert", final);

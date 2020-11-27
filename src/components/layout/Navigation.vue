@@ -65,13 +65,8 @@ import {Route} from "vue-router";
 const defaultPaths = [
   {
     moduleId: "tlos",
-    base: buildTokenId({ contract: "eosio.token", symbol: "TLOS" }),
-    quote: buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" })
-  },
-  {
-    moduleId: "usds",
-    base: buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" }),
-    quote: buildTokenId({ contract: "tokens.swaps", symbol: "USDT" })
+    base: buildTokenId({ contract: "token.seeds", symbol: "SEEDS" }),
+    quote: buildTokenId({ contract: "tokens.hypha", symbol: "HYPHA" })
   }
 ];
 const appendBaseQuoteQuery = (base: string, quote: string, route: Route) => ({
@@ -158,16 +153,6 @@ export default class Navigation extends Vue {
         icon: "swimming-pool",
         active: this.$route.name == "Relay" || this.$route.name == "Relays"
       },
-      {
-        label: "Telos->EOS",
-        destination: createDirectRoute("Bridge", {
-          account: this.isAuthenticated
-        }),
-        render: this.selectedService!.features.includes(Feature.Bridge),
-        icon: "wallet",
-        active: this.$route.name == "Bridge",
-        disabled: false
-      },
       ...[
         this.selectedService!.features.includes(Feature.Wallet)
           ? {
@@ -200,11 +185,7 @@ export default class Navigation extends Vue {
       params: moduleId === "xchain" ? {} : defaultModuleParams(moduleId)
     });
 
-    if (moduleId === "xchain") {
-      this.$router.push({ name: "Bridge", ...extendXtransferRouter(moduleId) });
-    } else {
-      this.$router.push({ name: "Tokens", ...extendRouter(moduleId) });
-    }
+    this.$router.push({ name: "Tokens", ...extendRouter(moduleId) });
     //this.$router.push({ name: "Tokens", ...extendRouter(moduleId) });
   }
   get options() {

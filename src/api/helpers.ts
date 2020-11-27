@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { vxm } from "@/store";
 import { JsonRpc } from "eosjs";
 import { Asset, number_to_asset, Sym } from "eos-common";
-import { rpc, xrpc } from "./rpc";
+import { rpc } from "./rpc";
 import {
   BaseToken,
   EosMultiRelay,
@@ -18,7 +18,7 @@ import { Chain, EosTransitModule } from "@/store/modules/wallet/tlosWallet";
 import wait from "waait";
 import { sortByNetworkTokens } from "./sortByNetworkTokens";
 
-export const networkTokens = ["TLOS"];
+export const networkTokens = ["SEEDS"];
 
 export const isOdd = (num: number) => num % 2 == 1;
 
@@ -57,7 +57,6 @@ export const multiSteps = async ({
 };
 
 const telosRpc: JsonRpc = rpc;
-const eosRpc: JsonRpc = xrpc;
 
 interface TraditionalStat {
   supply: Asset;
@@ -340,9 +339,7 @@ export const fetchTokenSymbol = async (
 ): Promise<Sym> => {
   const statRes: {
     rows: { supply: string; max_supply: string; issuer: string }[];
-  } = (vxm.tlosWallet.chain == Chain.telos) ?
-      await rpc.get_table_rows({code: contractName, scope: symbolName, table: "stat"}) :
-      await xrpc.get_table_rows({code: contractName, scope: symbolName, table: "stat"});
+  } = await rpc.get_table_rows({code: contractName, scope: symbolName, table: "stat"});
 
   //  console.log("fetchTokenSymbol(",contractName,"",symbolName,")");
   if (statRes.rows.length == 0)
@@ -508,8 +505,7 @@ export const getBankBalance = async (): Promise<{
 export enum Feature {
   Trade,
   Wallet,
-  Liquidity,
-  Bridge
+  Liquidity
 }
 
 export interface Service {
@@ -522,8 +518,7 @@ export const services: Service[] = [
     namespace: "tlos",
     features: [Feature.Trade, Feature.Liquidity, Feature.Wallet]
   },
-  { namespace: "usds", features: [Feature.Trade, Feature.Wallet] },
-  { namespace: "xchain", features: [Feature.Bridge] }
+  { namespace: "usds", features: [Feature.Trade, Feature.Wallet] }
 ];
 
 export interface ReserveTableRow {
@@ -591,7 +586,7 @@ export const fetchMultiRelay = async (
   );
   return {
     ...relay,
-    reserves: sortByNetworkTokens(relay.reserves, reserve => reserve.symbol, ["TLOS"])
+    reserves: sortByNetworkTokens(relay.reserves, reserve => reserve.symbol, ["SEEDS"])
   };
 };
 
@@ -645,9 +640,9 @@ Liquidity depth = 2 * 950.1844 TLOSD
  */
 export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   const rawTradeData = await telosRpc.get_table_rows({
-    code: "data.tbn",
+    code: "data.seedsx",
     table: "tradedata",
-    scope: "data.tbn",
+    scope: "data.seedsx",
     limit: 100
   });
 
@@ -666,7 +661,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
 
   let newTlosObj: any = {};
   newTlosObj.id = 1;
-  newTlosObj.code = "TLOS";
+  newTlosObj.code = "SEEDS";
   newTlosObj.name = newTlosObj.code;
   newTlosObj.primaryCommunityImageName = newTlosObj.code;
   newTlosObj.liquidityDepth = 0.0;
@@ -685,16 +680,16 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
     let newObj: any = {};
     newObj.id = i;
     newObj.code = itemObject.liquidity_depth.find(
-      (token: any) => !compareString(token.key, "TLOS")
+      (token: any) => !compareString(token.key, "SEEDS")
     ).key;
     newObj.name = newObj.code;
     newObj.primaryCommunityImageName = newObj.code;
     newObj.liquidityDepth =
       itemObject.liquidity_depth
-        .find((token: any) => compareString(token.key, "TLOS"))
+        .find((token: any) => compareString(token.key, "SEEDS"))
         .value.split(" ")[0] * usdPriceOfTlos * 2.0;
     newObj.price =
-      itemObject.price.find((token: any) => compareString(token.key, "TLOS"))
+      itemObject.price.find((token: any) => compareString(token.key, "SEEDS"))
         .value * usdPriceOfTlos;
 //    newObj.priceTlos =
 //      itemObject.price.find((token: any) => compareString(token.key, "TLOS")).value;
@@ -702,7 +697,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
     // This is to convert from % change in TLOS to USD
     let raw24hChange =
       itemObject.price_change_24h.find((token: any) =>
-        compareString(token.key, "TLOS")
+        compareString(token.key, "SEEDS")
       ).value * usdPriceOfTlos;
     let a = 1.0 / (1.0 + usdTlos24hPriceMove);
     newObj.change24h = 100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
@@ -710,16 +705,16 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
     let volume24h: any = {};
     volume24h.USD =
       itemObject.volume_24h
-        .find((token: any) => compareString(token.key, "TLOS"))
+        .find((token: any) => compareString(token.key, "SEEDS"))
         .value.split(" ")[0] * usdPriceOfTlos;
     newObj.volume24h = volume24h;
 
     // TODO smart token APR needs to be incuded in "pools" tab, calculations follow, APR in TLOS
     let smartPrice = itemObject.smart_price
-      .find((token: any) => compareString(token.key, "TLOS"))
+      .find((token: any) => compareString(token.key, "SEEDS"))
       .value.split(" ")[0];
     let smartPriceApr = itemObject.smart_price_change_30d
-      .find((token: any) => compareString(token.key, "TLOS"))
+      .find((token: any) => compareString(token.key, "SEEDS"))
       .value.split(" ")[0];
     smartPriceApr = (smartPriceApr / (smartPrice - smartPriceApr)) * 100; // * 12;
 

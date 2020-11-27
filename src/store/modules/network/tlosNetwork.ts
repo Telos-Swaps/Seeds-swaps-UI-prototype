@@ -138,37 +138,6 @@ export class TlosNetworkModule
     this.pingTillChange({ originalBalances });
   }
 
-  @action async xtransfer({ to, amount, id, memo }: TransferParam) {
-    // This routing handles Telos->EOS and EOS->Telos movements.
-//    console.log("telosNetwork.xtransfer", to, amount, id, memo);
-    if (!this.isAuthenticated) throw new Error("Not authenticated!");
-    const symbol = id;
-    const tokens = vxm.xchainBancor.tokens;
-    //    console.log("xtransfer.tokens", symbol, tokens);
-    const token = tokens.find(x => compareString(x.symbol.toString(), symbol));
-    if (!token) throw new Error("Failed finding token");
-    //    console.log("xtransfer.token", token);
-    const contract = token.contract;
-    const precision = token.precision;
-
-    const asset = number_to_asset(amount, new Sym(symbol, precision));
-    const new_memo = to.toString() + ((vxm.tlosWallet.chain == Chain.telos) ? "@eos" : "@telos") + (memo === "" ? "" : "|" + memo);
-    //    console.log("telosNetwork.xtransfer", new_memo);
-    const bridge_account = "telosd.io";
-
-    const actions = await multiContract.tokenTransfer(contract, {
-      to: bridge_account,
-      quantity: asset.to_string(),
-      memo: new_memo
-    });
-
-    const originalBalances = await this.getBalances({
-      tokens: [{ contract, symbol }]
-    });
-    await vxm.tlosWallet.tx(actions);
-    this.pingTillChange({ originalBalances });
-  }
-
   @action async fetchBulkBalances(
     tokens: GetBalanceParam["tokens"]
   ): Promise<TokenBalanceReturn[]> {
