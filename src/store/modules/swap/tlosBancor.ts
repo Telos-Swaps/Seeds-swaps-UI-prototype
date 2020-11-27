@@ -103,8 +103,8 @@ const tokenContractSupportsOpen = async (contractName: string) => {
   return abiConf.abi.actions.some(action => action.name == "open");
 };
 
-//const getSymbolName = (tokenSymbol: TokenSymbol) =>
-//  tokenSymbol.symbol.code().to_string();
+const getSymbolName = (tokenSymbol: TokenSymbol) =>
+  tokenSymbol.symbol.code().to_string();
 
 const relayHasReserveBalances = (relay: EosMultiRelay) =>
   relay.reserves.every(reserve => reserve.amount > 0);
@@ -128,9 +128,15 @@ const reservesIncludeTokenMeta = (tokenMeta: TokenMeta[]) => (
   return status;
 };
 
+const compareEosTokenSymbol = (
+  a: DryRelay["smartToken"],
+  b: DryRelay["smartToken"]
+) => compareString(a.contract, b.contract) && a.symbol.isEqual(b.symbol);
+
 const reservesIncludeTokenMetaDry = (tokenMeta: TokenMeta[]) => (
   relay: DryRelay
 ) => {
+  console.log("reservesIncludeTokenMetaDry",relay.reserves,tokenMeta);
   const status = relay.reserves.every(reserve =>
     tokenMeta.some(
       meta =>
@@ -146,6 +152,18 @@ const reservesIncludeTokenMetaDry = (tokenMeta: TokenMeta[]) => (
     );
   return status;
 };
+
+const compareEosMultiToDry = (multi: EosMultiRelay, dry: DryRelay) =>
+  compareString(
+    buildTokenId({
+      contract: multi.smartToken.contract,
+      symbol: multi.smartToken.symbol
+    }),
+    buildTokenId({
+      contract: dry.smartToken.contract,
+      symbol: dry.smartToken.symbol.code().to_string()
+    })
+  );
 
 const fetchBalanceAssets = async (tokens: BaseToken[], account: string) => {
   return Promise.all(
@@ -237,6 +255,7 @@ export interface ViewTokenMinusLogo {
   symbol: string;
   name: string;
   price: number;
+//  priceTlos: number;
   liqDepth: number;
   change24h: number;
   volume24h: number;
@@ -260,7 +279,7 @@ const agnosticToTokenAmount = (agnostic: AgnosticToken): TokenAmount => ({
 const simpleReturn = (from: Asset, to: Asset) =>
   asset_to_number(to) / asset_to_number(from);
 
-const baseReturn = (from: AgnosticToken, to: AgnosticToken) => {
+const baseReturn = (from: AgnosticToken, to: AgnosticToken, decAmount = 1) => {
   const fromAsset = agnosticToAsset(from);
   const toAsset = agnosticToAsset(to);
   const reward = simpleReturn(fromAsset, toAsset);
@@ -358,6 +377,7 @@ const buildTwoFeedsFromRelay = (
     )!;
     return {
       costByNetworkUsd: price.unitPrice,
+//      costByNetworkTlos: price.unitPrice,
       liqDepth: calculateLiquidtyDepth(relay, knownPrices),
       smartTokenId: buildTokenId({
         contract: relay.smartToken.contract,
@@ -398,14 +418,7 @@ const tokenStrategies: Array<(one: string, two: string) => string> = [
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 1)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 2)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 3)),
-  (one, two) =>
-    chopSecondSymbol(
-      one,
-      two
-        .split("")
-        .reverse()
-        .join("")
-    )
+  (one, two) => chopSecondSymbol(one, two.split("").reverse().join(""))
 ];
 
 const generateSmartTokenSymbol = async (
@@ -460,6 +473,14 @@ const eosMultiToHydrated = (relay: EosMultiRelay): HydratedRelay => ({
 type FeatureEnabled = (relay: EosMultiRelay, loggedInUser: string) => boolean;
 type Feature = [string, FeatureEnabled];
 
+const isOwner: FeatureEnabled = (relay, account) => relay.owner == account;
+
+const multiRelayToSmartTokenId = (relay: EosMultiRelay) =>
+  buildTokenId({
+    contract: relay.smartToken.contract,
+    symbol: relay.smartToken.symbol
+  });
+
 interface RelayFeed {
   smartTokenId: string;
   tokenId: string;
@@ -504,10 +525,7 @@ export class TlosBancorModule
       const relay = this.relaysList.find(relay => compareString(relay.id, id))!;
       const features: Feature[] = [
         ["addLiquidity", () => true],
-        [
-          "removeLiquidity",
-          relay => relay.reserves.some(reserve => reserve.amount > 0)
-        ]
+        ["removeLiquidity", relay => relay.reserves.some(reserve => reserve.amount > 0)]
       ];
       return features
         .filter(([name, test]) => test(relay, isAuthenticated))
@@ -645,7 +663,7 @@ export class TlosBancorModule
       reserves
     );
     const txRes = await this.triggerTx(nukeRelayActions);
-    await this.waitAndUpdate();
+    this.waitAndUpdate();
     return txRes.transaction_id as string;
   }
 
@@ -971,7 +989,7 @@ export class TlosBancorModule
       this.hydrateOldRelays(firstChunk)
     ]);
 
-    await this.buildManuallyIfNotIncludedInExistingFeeds({
+    this.buildManuallyIfNotIncludedInExistingFeeds({
       relays: firstBatch,
       existingFeeds: bancorApiFeeds
     });
@@ -979,7 +997,7 @@ export class TlosBancorModule
     for (const chunk in remainingChunks) {
       await wait(waitTime);
       let relays = await this.hydrateOldRelays(remainingChunks[chunk]);
-      await this.buildManuallyIfNotIncludedInExistingFeeds({
+      this.buildManuallyIfNotIncludedInExistingFeeds({
         relays,
         existingFeeds: bancorApiFeeds
       });
@@ -1024,7 +1042,7 @@ export class TlosBancorModule
 
     const v1Relays = getHardCodedRelays();
 
-    await this.fetchTokenBalancesIfPossible(
+    this.fetchTokenBalancesIfPossible(
       _.uniqWith(
         v1Relays.flatMap(x =>
           x.reserves.map(x => ({ ...x, symbol: x.symbol.code().to_string() }))
@@ -1097,7 +1115,7 @@ export class TlosBancorModule
         )
     );
 
-    await this.addPools({
+    this.addPools({
       multiRelays: [],
       tokenMeta,
       dryDelays: remainingV1Relays
@@ -1127,8 +1145,8 @@ export class TlosBancorModule
       ]);
       this.setTokenMeta(tokenMeta);
       this.setTlosPrice(usdPriceOfTlos);
-      //      this.setTlos24hPriceMove(-4.44);
-      this.setTlos24hPriceMove(0.0);
+//      this.setTlos24hPriceMove(-4.44);
+      this.setTlos24hPriceMove(0.00);
 
       const v1Relays = getHardCodedRelays();
 
@@ -1136,7 +1154,7 @@ export class TlosBancorModule
         noBlackListedReservesDry(blackListedTokens)
       );
 
-      await this.fetchTokenBalancesIfPossible(
+      this.fetchTokenBalancesIfPossible(
         _.uniqWith(
           allDry.flatMap(x =>
             x.reserves.map(x => ({ ...x, symbol: x.symbol.code().to_string() }))
@@ -1288,7 +1306,7 @@ export class TlosBancorModule
       relays.map(
         async (relay): Promise<EosMultiRelay> => {
           const [settings, reserveBalances] = await Promise.all([
-            await rpc.get_table_rows({
+            rpc.get_table_rows({
               code: relay.contract,
               scope: relay.contract,
               table: "settings"
@@ -1335,8 +1353,7 @@ export class TlosBancorModule
           const feed = this.relayFeed.find(feed =>
             compareString(feed.smartTokenId, smartTokenId)
           );
-          const apr: number =
-            feed && feed.smartPriceApr ? feed.smartPriceApr : 0.0;
+          const apr: number = (feed && feed.smartPriceApr) ? feed.smartPriceApr : 0.0;
 
           return {
             id: smartTokenId,
@@ -1566,7 +1583,7 @@ export class TlosBancorModule
       );
       if (includesRelay) {
         this.setMultiRelays(relays);
-        await this.refreshBalances(
+        this.refreshBalances(
           includesRelay.reserves.map(reserve => ({
             contract: reserve.contract,
             symbol: reserve.symbol
@@ -1723,7 +1740,9 @@ export class TlosBancorModule
     const [reserves, supply, smartUserBalanceString] = await Promise.all([
       this.fetchRelayReservesAsAssets(suggestWithdraw.id),
       fetchTokenStats(relay.smartToken.contract, relay.smartToken.symbol),
-      getBalance(relay.smartToken.contract, relay.smartToken.symbol) as Promise<string>
+      getBalance(relay.smartToken.contract, relay.smartToken.symbol) as Promise<
+        string
+      >
     ]);
 
     const smartUserBalance = new Asset(smartUserBalanceString);
@@ -1872,7 +1891,7 @@ export class TlosBancorModule
       tokenIds: [from.id, to.id]
     });
 
-    await this.refresh();
+    this.refresh();
     return txRes.transaction_id;
   }
 
@@ -1913,7 +1932,7 @@ export class TlosBancorModule
         tokens
       })
     ]);
-    await vxm.tlosNetwork.pingTillChange({ originalBalances });
+    vxm.tlosNetwork.pingTillChange({ originalBalances });
     return txRes;
   }
 

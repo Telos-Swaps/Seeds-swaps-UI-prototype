@@ -216,10 +216,6 @@ export interface TokenPriceExtended extends TokenPrice {
   balance: number;
 }
 
-export interface TokenPriceDecimal extends TokenPrice {
-  decimals: number;
-}
-
 export interface TradeQuery {
   base: string;
   quote: string;

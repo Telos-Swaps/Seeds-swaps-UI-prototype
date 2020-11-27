@@ -205,15 +205,15 @@ export class BancorModule extends VuexModule.With({
     params?: ModuleParam;
     resolveWhenFinished: boolean;
   }) {
-    await this.moduleInitalising(moduleId);
+    this.moduleInitalising(moduleId);
     if (resolveWhenFinished) {
       try {
         await this.$store.dispatch(`${moduleId}Bancor/init`, params || null, {
           root: true
         });
-        await this.moduleInitialised(moduleId);
+        this.moduleInitialised(moduleId);
       } catch (e) {
-        await this.moduleThrown(moduleId);
+        this.moduleThrown(moduleId);
       }
     } else {
       try {
@@ -223,7 +223,7 @@ export class BancorModule extends VuexModule.With({
           })
           .then(() => this.moduleInitialised(moduleId));
       } catch (e) {
-        await this.moduleThrown(moduleId);
+        this.moduleThrown(moduleId);
       }
     }
   }
@@ -272,6 +272,7 @@ export class BancorModule extends VuexModule.With({
         price: usdPrice,
         lastChecked: new Date().getTime()
       });
+      return usdPrice;
     } catch (e) {
       throw new Error(
         `Failed to find USD Price of TLOS from External API & Relay ${e.message}`

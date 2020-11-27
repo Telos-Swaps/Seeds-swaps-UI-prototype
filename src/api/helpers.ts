@@ -122,22 +122,9 @@ export const fetchUsdPriceOfSeeds = async (): Promise<number> => {
   const usdPriceOfSeedsAsset = new Asset(usdPriceOfSeedsString);
   const usdPriceOfSeeds = 1 / asset_to_number(usdPriceOfSeedsAsset);
 
-  console.log(
-    "fetchUsdPriceOfSeeds",
-    res,
-    usdPriceOfSeedsString,
-    usdPriceOfSeedsAsset,
-    usdPriceOfSeeds
-  );
+  console.log( "fetchUsdPriceOfSeeds", res, usdPriceOfSeedsString, usdPriceOfSeedsAsset, usdPriceOfSeeds );
 
   return usdPriceOfSeeds;
-};
-
-export const fetchCoinGechoUsdPriceOfEos = async (): Promise<number> => {
-  const res = await axios.get<{ eos: { usd: string } }>(
-    "https://api.coingecko.com/api/v3/simple/price?ids=eos&vs_currencies=usd"
-  );
-  return Number(res.data.eos.usd);
 };
 
 export const updateArray = <T>(
@@ -182,7 +169,6 @@ export const fetchTokenSymbol = async (
     table: "stat"
   });
 
-  //  console.log("fetchTokenSymbol(",contractName,"",symbolName,")");
   if (statRes.rows.length == 0)
     throw new Error(
       `Unexpected stats table return from tokenContract ${contractName} ${symbolName}`
@@ -273,8 +259,7 @@ export const getTokenBalances = async (
 
 export const identifyVersionBySha3ByteCodeHash = (sha3Hash: string): string => {
   if (
-    sha3Hash ==
-    "0xf0a5de528f6d887b14706f0e66b20bee0d4c81078b6de9f395250e287e09e55f"
+    sha3Hash == "0xf0a5de528f6d887b14706f0e66b20bee0d4c81078b6de9f395250e287e09e55f"
   )
     return "11";
   throw new Error("Failed to identify version of Pool");
