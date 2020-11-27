@@ -17,9 +17,8 @@ import { store } from "../../../store";
 import { compareString, updateArray } from "@/api/helpers";
 import {
   fetchNewdexEosPriceOfTlos,
-  fetchCoinGechoUsdPriceOfEos,
+  fetchCoinGechoUsdPriceOfEos
 } from "@/api/helpers";
-import wait from "waait";
 import { defaultModule } from "@/router";
 
 interface TlosPrice {
@@ -124,11 +123,6 @@ export class BancorModule extends VuexModule.With({
     return vxm[`${this.currentNetwork}Bancor`]["moreTokensAvailable"];
   }
 
-  get loadingTokens() {
-    // @ts-ignore
-    return vxm[`${this.currentNetwork}Bancor`]["loadingTokens"];
-  }
-
   get newPoolTokenChoices(): (networkTokenSymbol: string) => ModalChoice[] {
     // @ts-ignore
     return vxm[`${this.currentNetwork}Bancor`]["newPoolTokenChoices"];
@@ -214,15 +208,15 @@ export class BancorModule extends VuexModule.With({
     params?: ModuleParam;
     resolveWhenFinished: boolean;
   }) {
-    this.moduleInitalising(moduleId);
+    await this.moduleInitalising(moduleId);
     if (resolveWhenFinished) {
       try {
         await this.$store.dispatch(`${moduleId}Bancor/init`, params || null, {
           root: true
         });
-        this.moduleInitialised(moduleId);
+        await this.moduleInitialised(moduleId);
       } catch (e) {
-        this.moduleThrown(moduleId);
+        await this.moduleThrown(moduleId);
       }
     } else {
       try {
@@ -232,7 +226,7 @@ export class BancorModule extends VuexModule.With({
           })
           .then(() => this.moduleInitialised(moduleId));
       } catch (e) {
-        this.moduleThrown(moduleId);
+        await this.moduleThrown(moduleId);
       }
     }
   }
@@ -274,7 +268,7 @@ export class BancorModule extends VuexModule.With({
       const p2 = res2 != null ? res2 as number : 0.0;
       const usdPrice = p1 * p2;
 
-      console.log("getUsdPrice",p1,p2,usdPrice);
+//      console.log("getUsdPrice",p1,p2,usdPrice);
 
       // TODO : this syntax is really bad, not sure how to do it properly
 //      const res = await any([fetchCmcUsdPriceOfTlos()]);

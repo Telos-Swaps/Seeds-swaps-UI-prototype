@@ -100,13 +100,13 @@ class MultiContractTx {
       name: "transfer",
       data: {
         from: this.getAuth()[0].actor,
-//        to: process.env.VUE_APP_NETWORKCONTRACT,
-        to: "sx.seedsx",
+        to: process.env.VUE_APP_NETWORKCONTRACT,
+//        to: "sx.seedsx",
         quantity: amount.to_string(),
         memo
       }
     };
-    console.log(action, "is the action...");
+//    console.log(action, "is the action...");
     return this.tx([action]);
   }
 
@@ -224,7 +224,7 @@ class MultiContractTx {
       actions.push(this.updateFeeAction(symbolCode, fee));
     }
 
-    console.log(actions, "were actions");
+//    console.log(actions, "were actions");
     return this.tx(actions);
   }
 
@@ -236,7 +236,7 @@ class MultiContractTx {
       amount.to_string(),
       symbolCode
     ) as SemiAction;
-    console.log(action, "was the action");
+//    console.log(action, "was the action");
     return action;
   }
 

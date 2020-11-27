@@ -14,7 +14,7 @@ import {
   TokenMeta,
   TokenPrice
 } from "@/types/bancor";
-import { Chain, EosTransitModule } from "@/store/modules/wallet/tlosWallet";
+import { EosTransitModule } from "@/store/modules/wallet/tlosWallet";
 import wait from "waait";
 import { sortByNetworkTokens } from "./sortByNetworkTokens";
 
@@ -63,26 +63,6 @@ interface TraditionalStat {
   max_supply: Asset;
 }
 
-/*
-1
-telosd.swaps
-[ "USDT", "TLOSD", "TLOSM", "EOSDT" ]
-[ { "sym": "4,USDT", "contract": "tokens.swaps" }, { "sym": "4,TLOSD", "contract": "tokens.swaps" }, { "sym": "8,TLOSM", "contract": "tokens.swaps" }, { "sym": "9,EOSDT", "contract": "tokens.swaps" } ]
-
-telosd.io
-[ "BTC", "EOS", "BNT", "USDT", "VIGOR", "EOSDT" ]
-[ { "sym": "8,BTC", "contract": "tokens.swaps" }, { "sym": "4,EOS", "contract": "tokens.swaps" }, { "sym": "10,BNT", "contract": "tokens.swaps" }, { "sym": "4,USDT", "contract": "tokens.swaps" }, { "sym": "4,VIGOR", "contract": "tokens.swaps" }, { "sym": "9,EOSDT", "contract": "tokens.swaps" } ]
-
-
-
-1	{ "sym": "8,BTC", "contract": "tokens.swaps" }	1	0.00010000 BTC	eos	{ "sym": "8,PBTC", "contract": "btc.ptokens" }	1
-2	{ "sym": "4,EOS", "contract": "tokens.swaps" }	1	0.2500 EOS	eos	{ "sym": "4,EOS", "contract": "eosio.token" }	1
-3	{ "sym": "10,BNT", "contract": "tokens.swaps" }	1	0.2500000000 BNT	eos	{ "sym": "10,BNT", "contract": "bntbntbntbnt" }	1
-4	{ "sym": "4,USDT", "contract": "tokens.swaps" }	1	1.0000 USDT	eos	{ "sym": "4,USDT", "contract": "tethertether" }	1
-5	{ "sym": "4,VIGOR", "contract": "tokens.swaps" }	1	1.0000 VIGOR	eos	{ "sym": "4,VIGOR", "contract": "vigortoken11" }	1
-6	{ "sym": "9,EOSDT", "contract": "tokens.swaps" }	1	1.000000000 EOSDT	eos	{ "sym": "9,EOSDT", "contract": "eosdtsttoken" }	1
- */
-
 export const getSxContracts = async () => {
   const res = (await rpc.get_table_rows({
     code: "config.swaps",
@@ -129,154 +109,17 @@ export const compareString = (stringOne: string, stringTwo: string) => {
   return stringOne.toLowerCase() == stringTwo.toLowerCase();
 };
 
-// https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=usd
-// {"telos":{"usd":0.02797187}}
-//export const fetchCoinGechoUsdPriceOfTlos = async (): Promise<number> => {
-//  const res = await axios.get<{ telos: { usd: string } }>(
-//    "https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=usd"
-//  );
-//  return Number(res.data.telos.usd);
-//};
-
 export const fetchCoinGechoUsdPriceOfEos = async (): Promise<number> => {
   const res = await axios.get<{ eos: { usd: string } }>(
     "https://api.coingecko.com/api/v3/simple/price?ids=eos&vs_currencies=usd"
   );
-  console.log("fetchCoinGechoUsdPriceOfEos",Number(res.data.eos.usd));
   return Number(res.data.eos.usd);
 };
 
-// 902e192a-d57a-49ac-986d-01b5f3a1b922
-//
-// curl -H "X-CMC_PRO_API_KEY: 902e192a-d57a-49ac-986d-01b5f3a1b922" -H "Accept: application/json" -d "id=4660" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
-/*
-curl -H "X-CMC_PRO_API_KEY: 902e192a-d57a-49ac-986d-01b5f3a1b922" -H "Accept: application/json" -d "symbol=TLOS&convert=USD" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
-curl -H "X-CMC_PRO_API_KEY: 902e192a-d57a-49ac-986d-01b5f3a1b922" -H "Accept: application/json" -d "id=4660&convert=USD" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
-
-https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=4660&convert=USD&CMC_PRO_API_KEY=902e192a-d57a-49ac-986d-01b5f3a1b922
-
-{
-   "status":{
-      "timestamp":"2020-10-03T08:37:14.664Z",
-      "error_code":0,
-      "error_message":null,
-      "elapsed":10,
-      "credit_count":1,
-      "notice":null
-   },
-   "data":{
-      "TLOS":{
-         "id":4660,
-         "name":"Telos",
-         "symbol":"TLOS",
-         "slug":"telos",
-         "num_market_pairs":4,
-         "date_added":"2019-09-17T00:00:00.000Z",
-         "tags":[
-            "services",
-            "enterprise-solutions"
-         ],
-         "max_supply":null,
-         "circulating_supply":270123443.84430003,
-         "total_supply":355208370.6674,
-         "platform":{
-            "id":1765,
-            "name":"EOS",
-            "symbol":"EOS",
-            "slug":"eos",
-            "token_address":""
-         },
-         "is_active":1,
-         "cmc_rank":675,
-         "is_fiat":0,
-         "last_updated":"2020-10-03T08:36:43.000Z",
-         "quote":{
-            "USD":{
-               "price":0.01815647220941,
-               "volume_24h":37271.37537728,
-               "percent_change_1h":-0.55264775,
-               "percent_change_24h":-10.14481831,
-               "percent_change_7d":-19.06913511,
-               "market_cap":4904488.801269156,
-               "last_updated":"2020-10-03T08:36:43.000Z"
-            }
-         }
-      }
-   }
-}
-
-curl -H "X-CMC_PRO_API_KEY: 902e192a-d57a-49ac-986d-01b5f3a1b922" -H "Accept: application/json" -G https://pro-api.coinmarketcap.com/v1/cryptocurrency/map
-
-      {
-         "id":4660,
-         "name":"Telos",
-         "symbol":"TLOS",
-         "slug":"telos",
-         "rank":668,
-         "is_active":1,
-         "first_historical_data":"2019-09-19T05:29:13.000Z",
-         "last_historical_data":"2020-10-03T08:24:42.000Z",
-         "platform":{
-            "id":1765,
-            "name":"EOS",
-            "symbol":"EOS",
-            "slug":"eos",
-            "token_address":""
-         }
-      }
- */
-
-//export const fetchCmcUsdPriceOfTlos = async (): Promise<number> => {
-//  const res = await axios.get< any >(
-//    "http://localhost/quotes/latest?id=4660&convert=USD&CMC_PRO_API_KEY=902e192a-d57a-49ac-986d-01b5f3a1b922"
-//  );
-//  console.log("fetchCoinCmcUsdPriceOfTlos", res);
-
-//  const CoinMarketCap = require("coinmarketcap-api");
-
-//  const apiKey = "902e192a-d57a-49ac-986d-01b5f3a1b922";
-//  const client = new CoinMarketCap(apiKey);
-//  client
-//    .getQuotes({ symbol: "TLOS" })
-//    .then(console.log)
-//    .catch(console.error);
-
-//  return Number(1.0);
-//};
-/*
-export const fetchCoinGechoUsdPriceOfTlos = async (): Promise<number> => {
-  const res = await axios.get<{ telos: { usd: string } }>(
-    "https://api.coingecko.com/api/v3/simple/price?ids=telos&vs_currencies=usd"
-  );
-  return Number(res.data.telos.usd);
-};
-
-Tlos24hPriceMove
- */
 export interface TlosCmcPriceData {
   price: null | number;
   percent_change_24h: null | number;
 }
-
-export const fetchCmcUsdPriceOfTlos = async (): Promise<TlosCmcPriceData> => {
-  const res = await axios
-    .get<any>(
-      //"http://localhost:8080/v1/cryptocurrency/quotes/latest?id=4660&convert=USD&CMC_PRO_API_KEY=902e192a-d57a-49ac-986d-01b5f3a1b922"
-      "https://cors-anywhere.herokuapp.com/https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?id=4660&convert=USD&CMC_PRO_API_KEY=902e192a-d57a-49ac-986d-01b5f3a1b922"
-    )
-//    .then(resp => {
-//      console.log("fetchCoinCmcUsdPriceOfTlos", resp);
-//    })
-//    .catch(err => {
-//      console.log("fetchCoinCmcUsdPriceOfTlos", err);
-//    });
-
-//  console.log("fetchCoinCmcUsdPriceOfTlos", res.data.data[4660].quote.USD);
-  const price = Number(res.data.data[4660].quote.USD.price);
-  const percent_change_24h = Number(res.data.data[4660].quote.USD.percent_change_24h);
-
-  return {price:price,percent_change_24h:percent_change_24h};
-};
 
 export interface TlosNewdexPriceData {
   price: null | number;
@@ -284,23 +127,14 @@ export interface TlosNewdexPriceData {
 }
 
 export const fetchNewdexEosPriceOfTlos = async (): Promise<TlosNewdexPriceData> => {
-  const res = await axios
-      .get<any>(
-          //"https://api.newdex.io/v1/ticker?symbol=eosio.token-tlos-eos"
-          "https://api.newdex.io/v1/ticker?symbol=eosio.token-tlos-eos"
-      )
-//    .then(resp => {
-//      console.log("fetchNewdexEosPriceOfTlos", resp);
-//    })
-//    .catch(err => {
-//      console.log("fetchNewdexEosPriceOfTlos", err);
-//    });
+  const res = await axios.get<any>(
+    "https://api.newdex.io/v1/ticker?symbol=eosio.token-tlos-eos"
+  );
 
-//  console.log("fetchNewdexEosPriceOfTlos", res);
   const price = Number(res.data.data.last);
   const percent_change_24h = Number(res.data.data.change);
 
-  return {price:price,percent_change_24h:percent_change_24h};
+  return { price: price, percent_change_24h: percent_change_24h };
 };
 
 export const updateArray = <T>(
@@ -339,7 +173,11 @@ export const fetchTokenSymbol = async (
 ): Promise<Sym> => {
   const statRes: {
     rows: { supply: string; max_supply: string; issuer: string }[];
-  } = await rpc.get_table_rows({code: contractName, scope: symbolName, table: "stat"});
+  } = await rpc.get_table_rows({
+    code: contractName,
+    scope: symbolName,
+    table: "stat"
+  });
 
   //  console.log("fetchTokenSymbol(",contractName,"",symbolName,")");
   if (statRes.rows.length == 0)
@@ -374,10 +212,9 @@ export const getBalance = async (
     if (typeof precision == "number") {
       return number_to_asset(0, new Sym(symbolName, precision)).to_string();
     } else {
-      const symbol = await fetchTokenSymbol(contract, symbolName);
+      // const symbol = await fetchTokenSymbol(contract, symbolName);
       // TODO this is a hack because number_to_asset cannot just receive a symbol, precision is essential
       return number_to_asset(0, new Sym(symbolName, 4)).to_string();
-      // return number_to_asset(0, symbol).to_string();
     }
   }
 
@@ -428,18 +265,6 @@ const isValidBalance = (data: any): boolean =>
 export const getTokenBalances = async (
   accountName: string
 ): Promise<TokenBalances> => {
-  /*
-  const res = await axios.get<TokenBalances>(
-    `https://telos.caleos.io/v2/state/get_tokens?account=${accountName}`
-//    `https://telos.eosphere.io/v2/state/get_tokens?account=${accountName}`
-  );
-  console.log("getTokenBalances : ", res);
-  return {
-    ...res.data,
-    tokens: res.data.tokens.filter(isValidBalance)
-  };
-
-   */
   return { account: "", query_time: 0, tokens: [] };
 };
 
@@ -521,19 +346,6 @@ export const services: Service[] = [
   { namespace: "usds", features: [Feature.Trade, Feature.Wallet] }
 ];
 
-export interface ReserveTableRow {
-  contract: string;
-  ratio: number;
-  balance: string;
-}
-
-export interface SettingTableRow {
-  currency: string;
-  owner: string;
-  stake_enabled: boolean;
-  fee: number;
-}
-
 export interface ConverterV2Row {
   currency: string;
   fee: number;
@@ -553,21 +365,6 @@ export interface ConverterV2Row {
   }[];
 }
 
-interface BaseSymbol {
-  symbol: string;
-  precision: number;
-}
-
-const symToBaseSymbol = (symbol: Sym): BaseSymbol => ({
-  symbol: symbol.code().to_string(),
-  precision: symbol.precision()
-});
-
-const assetStringtoBaseSymbol = (assetString: string): BaseSymbol => {
-  const asset = new Asset(assetString);
-  return symToBaseSymbol(asset.symbol);
-};
-
 export const buildTokenId = ({ contract, symbol }: BaseToken): string =>
   contract + "-" + symbol;
 
@@ -586,7 +383,9 @@ export const fetchMultiRelay = async (
   );
   return {
     ...relay,
-    reserves: sortByNetworkTokens(relay.reserves, reserve => reserve.symbol, ["SEEDS"])
+    reserves: sortByNetworkTokens(relay.reserves, reserve => reserve.symbol, [
+      "SEEDS"
+    ])
   };
 };
 
@@ -598,9 +397,6 @@ export const getTokenMeta = async (): Promise<TokenMeta[]> => {
     tokenMetaDataEndpoint
   );
 
-//  console.log("getTokenMeta",[...res.data]);
-
-  //  return [...res.data, ...hardCoded()]
   return [...res.data]
     .filter(token => compareString(token.chain, "eos"))
     .map(token => ({
@@ -609,35 +405,6 @@ export const getTokenMeta = async (): Promise<TokenMeta[]> => {
     }));
 };
 
-export interface TickerPrice {
-  "15m": number;
-  last: number;
-  buy: number;
-  sell: number;
-  symbol: string;
-}
-//      //  getTokens(): Promise<TokenPrice[]>;
-
-// cleos --url https://api.telos.africa get table data.tbn data.tbn tradedata -L tlosdx.swaps -l 1
-/*
-{
-  "rows": [{
-      "converter": "tlosdx.swaps",
-      "timestamp": "2020-11-08T10:04:49",
-      "volume_24h": [{"key": "TLOS","value": "564.1180 TLOS"},{"key": "TLOSD","value": "7.7665 TLOSD"}],
-      "volume_cumulative": [{"key": "TLOS","value": "20779.7151 TLOS"},{"key": "TLOSD","value": "387.0396 TLOSD"}],
-      "price": [{"key": "TLOS","value": "72.00000000000000000"},{"key": "TLOSD","value": "0.01388888888888889"}],
-      "price_change_24h": [{"key": "TLOS","value": "-0.07128514056225299"},{"key": "TLOSD","value": "0.00001373739062329"}],
-      "liquidity_depth": [{"key": "TLOS","value": "69098.8886 TLOS"},{"key": "TLOSD","value": "950.1844 TLOSD"}],
-      "smart_price": [{"key": "TLOS","value": "0.68491061533971465"},{"key": "TLOSD","value": "0.00941826120905507"}],
-      "smart_price_change_30d": [{"key": "TLOS","value": "0.13301394155961210"},{"key": "TLOSD","value": "-0.00216214369359566"}]
-    }]
-}
-
-TLOSDpriceOfTLOS = 0.01388888888888889
-USDTpriceOfTLOS = 0.01388888888888889 * USDTpriceOfTLOSD
-Liquidity depth = 2 * 950.1844 TLOSD
- */
 export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   const rawTradeData = await telosRpc.get_table_rows({
     code: "data.seedsx",
@@ -657,7 +424,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   //  let usdTlos24hPriceMove = -4.44 / 100.0;
   // let usdTlos24hPriceMove = 0.0 / 100.0;
   let usdTlos24hPriceMove = await vxm.bancor.fetchUsd24hPriceMove();
-  console.log("usdTlos24hPriceMove",usdTlos24hPriceMove);
+  //  console.log("usdTlos24hPriceMove",usdTlos24hPriceMove);
 
   let newTlosObj: any = {};
   newTlosObj.id = 1;
@@ -666,7 +433,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   newTlosObj.primaryCommunityImageName = newTlosObj.code;
   newTlosObj.liquidityDepth = 0.0;
   newTlosObj.price = usdPriceOfTlos;
-//  newTlosObj.priceTlos = 1;
+  //  newTlosObj.priceTlos = 1;
   newTlosObj.change24h = 100.0 * usdTlos24hPriceMove;
   let volume24h: any = {};
   volume24h.USD = 0.0;
@@ -687,12 +454,14 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
     newObj.liquidityDepth =
       itemObject.liquidity_depth
         .find((token: any) => compareString(token.key, "SEEDS"))
-        .value.split(" ")[0] * usdPriceOfTlos * 2.0;
+        .value.split(" ")[0] *
+      usdPriceOfTlos *
+      2.0;
     newObj.price =
       itemObject.price.find((token: any) => compareString(token.key, "SEEDS"))
         .value * usdPriceOfTlos;
-//    newObj.priceTlos =
-//      itemObject.price.find((token: any) => compareString(token.key, "TLOS")).value;
+    //    newObj.priceTlos =
+    //      itemObject.price.find((token: any) => compareString(token.key, "TLOS")).value;
 
     // This is to convert from % change in TLOS to USD
     let raw24hChange =
@@ -700,7 +469,8 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
         compareString(token.key, "SEEDS")
       ).value * usdPriceOfTlos;
     let a = 1.0 / (1.0 + usdTlos24hPriceMove);
-    newObj.change24h = 100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
+    newObj.change24h =
+      100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
 
     let volume24h: any = {};
     volume24h.USD =
