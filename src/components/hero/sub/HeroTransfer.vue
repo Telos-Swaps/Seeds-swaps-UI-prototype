@@ -83,9 +83,6 @@ import { vxm } from "@/store";
 import numeral from "numeral";
 import HeroWrapper from "@/components/hero/HeroWrapper.vue";
 import TokenAmountInput from "@/components/convert/TokenAmountInput.vue";
-import { multiContract } from "@/api/multiContractTx";
-import wait from "waait";
-import { compareString } from "../../../api/helpers";
 
 @Component({
   components: {

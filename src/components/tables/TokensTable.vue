@@ -27,11 +27,6 @@
           :tbody-transition-props="transProps"
           :tbody-transition-handlers="transHandler"
         >
-          <template v-slot:head(change24h)="data">
-            <span class="cursor text-center" style="min-width: 1500px;">{{
-              data.label
-            }}</span>
-          </template>
           <template v-slot:cell(index)="data">
             {{ data.index + 1 }}
           </template>
@@ -47,18 +42,20 @@
           <template v-slot:cell(change24h)="data">
             <span
               :class="data.item.change24h == null ? '' : data.item.change24h >= 0 ? `text-success font-w700` : 'text-danger font-w700'"
-              >{{
-                data.item.change24h == null ? "N/A" : numeral(data.item.change24h).format("0.00") + "%"
-              }}</span>
+              >{{data.item.change24h == null ? "N/A" : numeral(data.item.change24h).format("0.00") + "%"}}</span>
           </template>
           <template v-slot:cell(price)="data">
             <span class="text-center font-w700">
-              <span v-if="data.item.price < 100">{{
-                numeral(data.item.price).format("$0,0.000000")
-              }}</span>
-              <span v-else>{{
-                numeral(data.item.price).format("$0,0.00")
-              }}</span>
+              <span v-if="data.item.price < 0.01">{{numeral(data.item.price).format("$0,0.000000")}}</span>
+              <span v-else-if="data.item.price < 1">{{numeral(data.item.price).format("$0,0.0000")}}</span>
+              <span v-else-if="data.item.price < 100">{{numeral(data.item.price).format("$0,0.00")}}</span>
+              <span v-else>{{numeral(data.item.price).format("$0,0")}}</span>
+            </span>
+          </template>
+          <template v-slot:cell(liqDepth)="data">
+            <span class="text-right">
+              <span v-if="data.item.liqDepth < 100">{{numeral(data.item.liqDepth).format("$0,0.00")}}</span>
+              <span v-else>{{numeral(data.item.liqDepth).format("$0,0")}}</span>
             </span>
           </template>
           <template v-slot:cell(actions)="data">
@@ -91,7 +88,6 @@ import { Watch, Component, Vue, Prop } from "vue-property-decorator";
 import numeral from "numeral";
 import SortIcons from "@/components/common/SortIcons.vue";
 import {
-  TokenPrice,
   SimpleToken,
   SimpleTokenWithMarketData
 } from "@/types/bancor";
@@ -117,6 +113,7 @@ import Velocity from "velocity-animate";
     SortIcons
   }
 })
+
 export default class TokensTable extends Vue {
   @Prop(Boolean) loading?: boolean;
   @Prop(Boolean) scrollToTop?: boolean;
@@ -135,19 +132,20 @@ export default class TokensTable extends Vue {
   transProps = {
     name: "flip-list"
   };
+
   transHandler = {
     beforeEnter: function(el: any) {
       el.style.opacity = 0;
       el.style.height = 0;
     },
     enter: function(el: any, done: any) {
-      var delay = el.dataset.index * 150;
+      let delay = el.dataset.index * 150;
       setTimeout(function() {
         Velocity(el, { opacity: 1, height: "1.6em" }, { complete: done });
       }, delay);
     },
     leave: function(el: any, done: any) {
-      var delay = el.dataset.index * 150;
+      let delay = el.dataset.index * 150;
       setTimeout(function() {
         Velocity(el, { opacity: 0, height: 0 }, { complete: done });
       }, delay);
@@ -173,21 +171,19 @@ export default class TokensTable extends Vue {
       key: "change24h",
       sortable: true,
       label: "24H Change",
-      class: "text-center"
+      class: "text-right"
     },
     {
       key: "price",
       sortable: true,
       label: "Price USD",
-      class: ["text-center"],
-      formatter: (value: any, key: any, item: any) =>
-        numeral(value).format("$0,0.000000")
+      class: ["text-right"],
     },
     {
       key: "volume24h",
       sortable: true,
       label: "24H Volume",
-      class: ["text-center"],
+      class: ["text-right"],
       formatter: (value: any, key: any, item: any) =>
         value == null || value == undefined
           ? "N/A"
@@ -272,21 +268,11 @@ table#tokens-table .flip-list-move {
 }
 
 @keyframes fa-blink {
-  0% {
-    opacity: 1;
-  }
-  25% {
-    opacity: 0.25;
-  }
-  50% {
-    opacity: 0.5;
-  }
-  75% {
-    opacity: 0.75;
-  }
-  100% {
-    opacity: 0;
-  }
+  0% {opacity: 1;}
+  25% {opacity: 0.25;}
+  50% {opacity: 0.5;}
+  75% {opacity: 0.75;}
+  100% {opacity: 0;}
 }
 .fa-blink {
   -webkit-animation: fa-blink 0.55s linear infinite;

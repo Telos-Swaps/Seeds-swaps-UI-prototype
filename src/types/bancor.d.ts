@@ -8,19 +8,16 @@ export interface TokenPrice {
   primaryCommunityImageName: string;
   liquidityDepth: number;
   price: number;
+//  priceTlos: number;
   change24h: number;
   volume24h: Volume24h;
-  priceHistory: PriceHistory[];
+  smartPriceApr: number;
+//  priceHistory: PriceHistory[];
 }
 
 export interface Volume24h {
-  ETH: number;
   USD: number;
   EUR: number;
-}
-
-export interface PriceHistory {
-  [index: number]: number;
 }
 
 export type FloatAmount = number;
@@ -139,7 +136,7 @@ export interface CoTrade {
   connectorBancorReserve: string;
   connectorOriginalReserve: string;
   smartTokenInETH: null;
-  smartTokeninUSD: null;
+  smartTokenInUSD: null;
   tokenDecimals: number;
   conversionFee: string;
   converterVersion: string;
@@ -178,6 +175,7 @@ export interface ViewToken {
   symbol: string;
   name: string;
   price?: number;
+//  priceTlos?: number;
   liqDepth?: number;
   logo: string;
   change24h?: number;
@@ -208,6 +206,7 @@ export interface ViewRelay {
   reserves: ViewReserve[];
   fee: number;
   owner: string;
+  apr: number;     // TODO populate APR
   addLiquiditySupported: boolean;
   removeLiquiditySupported: boolean;
   focusAvailable?: boolean;
@@ -314,8 +313,10 @@ export interface EosMultiRelay {
   contract: string;
   owner: string;
   isMultiContract: boolean;
+  smartEnabled: boolean;
   smartToken: AgnosticToken;
   fee: number;
+  apr: number;
 }
 
 export interface ModalChoice {
@@ -422,13 +423,13 @@ export interface BancorAPIResponseToken {
   liquidityDepth: number;
   decimals: number;
   price: number;
+//  priceTlos: number;
   change24h: number;
   volume24h: Volume24H;
   priceHistory: Array<number[]>;
 }
 
 export interface Volume24H {
-  ETH: number;
   USD: number;
   EUR: number;
 }
@@ -462,18 +463,6 @@ export interface Price {
   availableSupply: number;
   volume24h: number;
   diff30d: number;
-}
-
-export interface ETH {
-  balance: number;
-  price: Price;
-}
-
-export interface EthplorerBalance {
-  address: string;
-  ETH: ETH;
-  countTxs: number;
-  tokens: Token[];
 }
 
 export interface kv {

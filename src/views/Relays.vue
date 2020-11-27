@@ -77,8 +77,10 @@
               <template v-slot:cell(smartTokenSymbol)="data">
                 <span> {{ data.item.smartTokenSymbol }}</span>
               </template>
-              <template v-slot:cell(apr)>
-                --
+              <template v-slot:cell(apr)="data">
+                <span
+                  :class="data.item.apr == null ? '' : data.item.apr >= 0 ? `text-success font-w700` : 'text-danger font-w700'"
+                  >{{data.item.apr == null ? "N/A" : numeral(data.item.apr).format("0.00") + "%" }}</span>
               </template>
               <template v-slot:cell(actions)="data">
                 <div class="actionButtons">
@@ -106,8 +108,16 @@
                     :disabled="!data.item.addLiquiditySupported"
                     size="sm"
                     variant="info"
+                    class="mr-1"
                   >
                     <font-awesome-icon icon="plus" />
+                  </b-btn>
+                  <b-btn
+                    size="sm"
+                    variant="secondary"
+                    class="ml-1"
+                  >
+                    <font-awesome-icon icon="info" />
                   </b-btn>
                 </div>
               </template>
@@ -159,7 +169,8 @@ export default class Relays extends Vue {
     },
     {
       key: "smartTokenSymbol",
-      sortable: false
+      sortable: false,
+      label: "smart token"
     },
     {
       key: "owner",
@@ -170,13 +181,15 @@ export default class Relays extends Vue {
     {
       key: "apr",
       sortable: true,
-      label: "APR",
-      class: ["text-right", "font-w700"]
+      label: "30d yield",
+      class: "text-right"
+//      class: ["text-right", "font-w700"],
+//      formatter: (value: string) => numeral(value).format("0.0%")
     },
     {
       key: "liqDepth",
       sortable: true,
-      label: "Liquidity Depth",
+      label: "Liquidity",
       class: ["text-right", "font-w700"],
       formatter: (value: any) =>
         value ? numeral(value).format("$0,0.00") : "Not Available"
@@ -185,7 +198,7 @@ export default class Relays extends Vue {
       key: "fee",
       sortable: true,
       class: ["text-right", "font-w700"],
-      formatter: (value: string) => numeral(value).format("0.00%")
+      formatter: (value: string) => numeral(this.relayFee(parseFloat(value))).format("0.00%")
     },
     {
       key: "actions",
@@ -225,12 +238,16 @@ export default class Relays extends Vue {
       : ethAddress;
   }
 
+  relayFee(x: number){
+    return 1 - Math.pow(1 - x, 2);
+  }
+
   get focusDoesExist() {
     return this.tokens.some((token: any) => token.focusAvailable);
   }
 
   get tokens() {
-    return vxm.bancor.relays;
+    return vxm.bancor.relays.filter((relay: { smartEnabled: number; }) => relay.smartEnabled == 1);
   }
 
   focusRelay(symbolCode: string) {

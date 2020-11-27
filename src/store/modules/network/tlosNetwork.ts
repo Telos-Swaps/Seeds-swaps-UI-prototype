@@ -113,7 +113,7 @@ export class TlosNetworkModule
   }
 
   @action async transfer({ to, amount, id, memo }: TransferParam) {
-    console.log("telosNetwork.transfer", to, amount, id, memo);
+//    console.log("telosNetwork.transfer", to, amount, id, memo);
     if (!this.isAuthenticated) throw new Error("Not authenticated!");
     const symbol = id;
     const dirtyReserve = vxm.tlosBancor.relaysList
@@ -140,7 +140,7 @@ export class TlosNetworkModule
 
   @action async xtransfer({ to, amount, id, memo }: TransferParam) {
     // This routing handles Telos->EOS and EOS->Telos movements.
-    console.log("telosNetwork.xtransfer", to, amount, id, memo);
+//    console.log("telosNetwork.xtransfer", to, amount, id, memo);
     if (!this.isAuthenticated) throw new Error("Not authenticated!");
     const symbol = id;
     const tokens = vxm.xchainBancor.tokens;

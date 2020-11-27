@@ -27,12 +27,18 @@
             </template>
             <template v-slot:cell(price)="data">
               <span class="text-center font-w700">
-                <span v-if="data.item.price < 1">{{
-                  numeral(data.item.price).format("$0,0.000000")
-                }}</span>
-                <span v-else>{{
-                  numeral(data.item.price).format("$0,0.00")
-                }}</span>
+                {{
+                  isNaN(data.item.price)
+                    ? "-"
+                    : data.item.price >= 1
+                    ? numeral(data.item.price).format("$0,0.00")
+                    : numeral(data.item.price).format("$0,0.0000")
+                }}
+              </span>
+            </template>
+            <template v-slot:cell(balance)="data">
+              <span class="text-center font-w700">
+                {{ isNaN(data.item.balance) ? "-" : data.item.balance }}
               </span>
             </template>
             <template v-slot:cell(actions)="data">
@@ -94,22 +100,22 @@ export default class BridgeAccount extends Vue {
     },
     {
       key: "balance",
-      class: ["text-center"],
+      class: ["text-right"],
       sortable: true
     },
-    //    {
-    //      key: "price",
-    //      sortable: true,
-    //      label: "Price USD",
-    //      class: ["text-center"],
-    //      formatter: (value: any, key: any, item: any) =>
-    //        numeral(value).format("$0,0.00")
-    //    },
+    {
+      key: "price",
+      sortable: true,
+      label: "Price USD",
+      class: ["text-right"]
+      //      formatter: (value: any, key: any, item: any) =>
+      //        numeral(value).format("$0,0.00")
+    },
     {
       key: "value",
       sortable: true,
       sortByFormatted: true,
-      class: ["text-center"],
+      class: ["text-right"],
       formatter: (value: any, key: any, item: any) =>
         numeral(item.price * item.balance).format("$0,0.00")
     },
@@ -150,7 +156,7 @@ export default class BridgeAccount extends Vue {
     this.scrollToTop();
 
     this.$router.push({
-      name: "Xtransfer",
+      name: "Bridge",
       params: { id }
     });
   }

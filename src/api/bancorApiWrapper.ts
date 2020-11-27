@@ -42,10 +42,7 @@ export interface ConvertPayload {
   ownerAddress: string;
 }
 
-enum Blockchain {
-  TLOS,
-  ETH
-}
+enum Blockchain {TLOS}
 
 export class BancorApi implements BancorWrapper {
   instance: AxiosInstance;

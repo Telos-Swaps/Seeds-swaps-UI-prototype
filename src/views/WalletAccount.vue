@@ -94,14 +94,14 @@ export default class WalletAccount extends Vue {
     },
     {
       key: "balance",
-      class: ["text-center"],
+      class: ["text-right"],
       sortable: true
     },
     {
       key: "price",
       sortable: true,
       label: "Price USD",
-      class: ["text-center"],
+      class: ["text-right"],
       formatter: (value: any, key: any, item: any) =>
         numeral(value).format("$0,0.00")
     },
@@ -109,7 +109,7 @@ export default class WalletAccount extends Vue {
       key: "value",
       sortable: true,
       sortByFormatted: true,
-      class: ["text-center"],
+      class: ["text-right"],
       formatter: (value: any, key: any, item: any) =>
         numeral(item.price * item.balance).format("$0,0.00")
     },

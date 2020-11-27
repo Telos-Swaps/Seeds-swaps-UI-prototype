@@ -6,6 +6,7 @@ import {
   Wallet,
   WalletState
 } from "eos-transit";
+import anchor from "eos-transit-anchorlink-provider";
 import scatter from "eos-transit-scatter-provider";
 //import lynx from "eos-transit-lynx-provider";
 import ledger from "eos-transit-ledger-provider";
@@ -13,7 +14,6 @@ import ledger from "eos-transit-ledger-provider";
 //import meetone from "eos-transit-meetone-provider";
 //import whalevault from "eos-transit-whalevault-provider";
 //import keycat from "eos-transit-keycat-provider";
-import anchor from "eos-transit-anchorlink-provider";
 import { vxm } from "@/store";
 
 interface tlosWalletAction {
@@ -39,7 +39,7 @@ const telos_chain_options = {
     protocol: "https",
     chainId: "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
   },
-  walletProviders: [scatter(), ledger(), anchor("TLOSD.Telos")]
+  walletProviders: [anchor("TLOSD.Telos"), scatter(), ledger()]
 };
 
 const eos_chain_options = {
@@ -50,7 +50,7 @@ const eos_chain_options = {
     protocol: "https",
     chainId: "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906"
   },
-  walletProviders: [scatter(), ledger(), anchor("TLOSD.EOS")]
+  walletProviders: [anchor("TLOSD.Telos"), scatter(), ledger()]
 };
 
 const VuexModule = createModule({

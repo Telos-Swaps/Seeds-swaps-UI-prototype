@@ -29,7 +29,7 @@
         {
            "id":"3",
            "code":"EOS",
-           "name":"Eos",
+           "name":"EOS",
            "primaryCommunityImageName":"wEOSv2.png",
            "liquidityDepth":3905.8373,
            "price":2.78572682249338,
@@ -100,6 +100,18 @@
         },
         {
            "id":"9",
+           "code":"KANDA",
+           "name":"KANDA",
+           "primaryCommunityImageName":"KANDA.jpeg",
+           "liquidityDepth":4.9854,
+           "price":0.021280864978406,
+           "change24h":3.7957928297981094,
+           "volume24h":{
+              "USD":10.0
+           }
+        },
+        {
+           "id":"10",
            "code":"SEEDS",
            "name":"SEEDS",
            "primaryCommunityImageName":"SEEDS.png",
@@ -111,7 +123,7 @@
            }
         },
         {
-           "id":"10",
+           "id":"11",
            "code":"PEOPLE",
            "name":"PEOPLE",
            "primaryCommunityImageName":"PEOPLE.jpeg",
@@ -123,7 +135,7 @@
            }
         },
         {
-           "id":"11",
+           "id":"12",
            "code":"YNT",
            "name":"YNT",
            "primaryCommunityImageName":"YNT.png",
@@ -135,7 +147,7 @@
            }
         },
         {
-           "id":"12",
+           "id":"13",
            "code":"SAND",
            "name":"SAND",
            "primaryCommunityImageName":"SAND.jpeg",
@@ -147,7 +159,7 @@
            }
         },
         {
-           "id":"13",
+           "id":"14",
            "code":"HEART",
            "name":"HEART",
            "primaryCommunityImageName":"HEART.png",
@@ -159,7 +171,7 @@
            }
         },
         {
-           "id":"14",
+           "id":"15",
            "code":"QBE",
            "name":"QBE",
            "primaryCommunityImageName":"QBE",
@@ -171,7 +183,7 @@
            }
         },
         {
-           "id":"15",
+           "id":"16",
            "code":"SQRL",
            "name":"SQRL",
            "primaryCommunityImageName":"SQRL.png",
@@ -183,7 +195,7 @@
            }
         },
         {
-           "id":"16",
+           "id":"17",
            "code":"TLOSDAC",
            "name":"TLOSDAC",
            "primaryCommunityImageName":"TLOSDAC.png",
@@ -195,7 +207,7 @@
            }
         },
         {
-           "id":"17",
+           "id":"18",
            "code":"EOSDT",
            "name":"EOSDT",
            "primaryCommunityImageName":"EOSDT.jpg",

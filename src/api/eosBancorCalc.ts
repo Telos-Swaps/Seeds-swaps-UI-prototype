@@ -27,6 +27,7 @@ export interface v1Relay extends DryRelay {
 export interface HydratedRelay extends BaseRelay {
   reserves: TokenAmount[];
   fee: number;
+  apr: number;
 }
 
 export interface TokenAmount {

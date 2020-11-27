@@ -68,7 +68,6 @@ import wait from "waait";
 import { getHardCodedRelays } from "./staticRelays";
 import { sortByNetworkTokens } from "@/api/sortByNetworkTokens";
 import { liquidateAction, hydrateAction } from "@/api/singleContractTx";
-import * as data from "./data.json";
 
 const compareAgnosticToBalanceParam = (
   agnostic: AgnosticToken,
@@ -148,7 +147,7 @@ const reservesIncludeTokenMetaDry = (tokenMeta: TokenMeta[]) => (
   if (!status)
     console.warn(
       "Dropping relay containing reserves",
-      relay.reserves.map(x => x.symbol),
+      relay.reserves.map(x => x.symbol).toString(),
       "because they are not included in reserves"
     );
   return status;
@@ -220,6 +219,7 @@ const noBlackListedReserves = (blackListedTokens: BaseToken[]) => (
 
 const mandatoryNetworkTokens: BaseToken[] = [
   { contract: "eosio.token", symbol: "TLOS" }
+//  { contract: "tokens.swaps", symbol: "TLOSD" }
 ];
 
 const isBaseToken = (token: BaseToken) => (comparasion: BaseToken): boolean =>
@@ -260,6 +260,7 @@ export interface ViewTokenMinusLogo {
   symbol: string;
   name: string;
   price: number;
+//  priceTlos: number;
   liqDepth: number;
   change24h: number;
   volume24h: number;
@@ -381,11 +382,13 @@ const buildTwoFeedsFromRelay = (
     )!;
     return {
       costByNetworkUsd: price.unitPrice,
+//      costByNetworkTlos: price.unitPrice,
       liqDepth: calculateLiquidtyDepth(relay, knownPrices),
       smartTokenId: buildTokenId({
         contract: relay.smartToken.contract,
         symbol: relay.smartToken.symbol
       }),
+      smartPriceApr: relay.apr,
       tokenId: buildTokenId({ contract: token.contract, symbol: token.symbol })
     };
   });
@@ -420,14 +423,7 @@ const tokenStrategies: Array<(one: string, two: string) => string> = [
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 1)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 2)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 3)),
-  (one, two) =>
-    chopSecondSymbol(
-      one,
-      two
-        .split("")
-        .reverse()
-        .join("")
-    )
+  (one, two) => chopSecondSymbol(one, two.split("").reverse().join(""))
 ];
 
 const generateSmartTokenSymbol = async (
@@ -475,7 +471,8 @@ const eosMultiToHydrated = (relay: EosMultiRelay): HydratedRelay => ({
   smartToken: {
     symbol: new Symbol(relay.smartToken.symbol, relay.smartToken.precision),
     contract: relay.smartToken.contract
-  }
+  },
+  apr: relay.apr
 });
 
 type FeatureEnabled = (relay: EosMultiRelay, loggedInUser: string) => boolean;
@@ -494,8 +491,10 @@ interface RelayFeed {
   tokenId: string;
   liqDepth: number;
   costByNetworkUsd?: number;
+//  costByNetworkTlos?: number;
   change24H?: number;
   volume24H?: number;
+  smartPriceApr?: number;
 }
 
 const VuexModule = createModule({
@@ -799,6 +798,7 @@ export class TlosBancorModule
             id: reserveTokenId,
             symbol: reserve.symbol,
             price: feed.costByNetworkUsd,
+//            priceTlos: feed.costByNetworkTlos,
             change24h: feed.change24H,
             liqDepth: feed.liqDepth,
             volume24h: feed.volume24H,
@@ -850,7 +850,6 @@ export class TlosBancorModule
   }
 
   get token(): (arg0: string) => ViewToken {
-    //    console.log(this.tokens);
     return (id: string) => {
       const tradableToken = this.tokens.find(token =>
         compareString(token.id, id)
@@ -923,6 +922,7 @@ export class TlosBancorModule
           }),
           symbol: sortedReserves[1].symbol,
           smartTokenSymbol: relay.smartToken.symbol,
+          apr: relayFeed && relayFeed.smartPriceApr,
           liqDepth: relayFeed && relayFeed.liqDepth,
           //          addLiquiditySupported: relay.isMultiContract,
           addLiquiditySupported: true,
@@ -1058,7 +1058,6 @@ export class TlosBancorModule
     console.log("refresh called, doing some stuff");
 
     const v1Relays = getHardCodedRelays();
-    console.log("v1Relays : ", v1Relays);
     //    const allDry = [...v1Relays].filter(
     //        noBlackListedReservesDry(blackListedTokens)
     //    );
@@ -1154,8 +1153,6 @@ export class TlosBancorModule
     console.time("eos");
     console.log("eosInit received", param);
 
-    console.log("init : ", param);
-
     if (this.initialised) {
       console.log("eos refreshing instead");
       return this.refresh();
@@ -1171,16 +1168,15 @@ export class TlosBancorModule
 //      this.setTlos24hPriceMove(-4.44);
       this.setTlos24hPriceMove(0.00);
 
-      console.log("tokenMeta : ", tokenMeta);
-      console.log("usdPriceOfTlos : ", usdPriceOfTlos);
-      console.log("usdTlos24hPriceMove : ", this.usdTlos24hPriceMove);
+//      console.log("tokenMeta : ", tokenMeta);
+//      console.log("usdPriceOfTlos : ", usdPriceOfTlos);
+//      console.log("usdTlos24hPriceMove : ", this.usdTlos24hPriceMove);
 
       const v1Relays = getHardCodedRelays();
-      console.log("v1Relays : ", v1Relays);
+//      console.log("init.v1Relays",v1Relays);
       const allDry = [...v1Relays, ...v2Relays.map(multiToDry)].filter(
         noBlackListedReservesDry(blackListedTokens)
       );
-      console.log("allDry : ", allDry);
 
       this.fetchTokenBalancesIfPossible(
         _.uniqWith(
@@ -1197,7 +1193,7 @@ export class TlosBancorModule
         param.tradeQuery.base &&
         param.tradeQuery.quote;
 
-      console.log("quickTrade : ", quickTrade);
+//      console.log("quickTrade : ", quickTrade);
       if (quickTrade) {
         const { base: fromId, quote: toId } = param!.tradeQuery!;
         await this.bareMinimumForTrade({
@@ -1289,7 +1285,6 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
 
       // Pull token prices from chain
       const [tokenPrices] = await Promise.all([fetchTradeData()]);
-      console.log("tokenPrices : ", tokenPrices);
 
       const tlosToken = findOrThrow(tokenPrices, token =>
         compareString(token.code, "TLOS")
@@ -1334,6 +1329,8 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
           {
             change24H: token.change24h,
             costByNetworkUsd: token.price,
+//            costByNetworkTlos: token.priceTlos,
+//            liqDepth: token.liquidityDepth,
             liqDepth,
             tokenId: buildTokenId({
               contract: primaryReserve.contract,
@@ -1343,19 +1340,23 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
               contract: relay.smartToken.contract,
               symbol: relay.smartToken.symbol.code().to_string()
             }),
-            volume24H: token.volume24h.USD
+            volume24H: token.volume24h.USD,
+            smartPriceApr: token.smartPriceApr
           },
           includeTLOS
             ? {
                 ...secondary,
+//                liqDepth: tlosToken.liquidityDepth,
                 liqDepth,
                 costByNetworkUsd: tlosToken.price,
                 change24H: tlosToken.change24h,
-                volume24H: tlosToken.volume24h.USD
+                volume24H: tlosToken.volume24h.USD,
+                smartPriceApr: tlosToken.smartPriceApr
               }
             : {
                 ...secondary,
                 liqDepth
+//                liqDepth: tlosToken.liquidityDepth
               }
         ];
       });
@@ -1416,12 +1417,18 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
             symbol: smartTokenSymbol
           });
 
+          const feed = this.relayFeed.find(feed =>
+            compareString(feed.smartTokenId, smartTokenId)
+          );
+          const apr: number = (feed && feed.smartPriceApr) ? feed.smartPriceApr : 0.0;
+
           return {
             id: smartTokenId,
             contract: relay.contract,
             isMultiContract: false,
             fee: settings.rows[0].fee / 1000000,
             owner: relay.contract,
+            smartEnabled: settings.rows[0].smart_enabled,
             smartToken: {
               id: smartTokenId,
               amount: 0,
@@ -1441,7 +1448,8 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
               contract: reserve.contract,
               symbol: assetToSymbolName(reserve.amount),
               amount: asset_to_number(reserve.amount)
-            }))
+            })),
+            apr: apr
           };
         }
       )
@@ -1525,14 +1533,14 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
     }
      */
 
-    console.log("convertActions : ", depositActions);
+//    console.log("convertActions : ", depositActions);
 
     //    if (depositActions.length > 0) {
     //      await this.triggerTx(depositActions);
     //    }
 
     const txRes = await this.triggerTx(depositActions);
-    console.log("txRes : ", txRes);
+//    console.log("txRes : ", txRes);
 
     return txRes.transaction_id as string;
   }
@@ -1545,7 +1553,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
       }: LiquidityParams) {
         const relay = await this.relayById(relayId);
         const tokenAmounts = await this.viewAmountToTokenAmounts(reserves);
-    
+
         console.log("addLiquidity(", relay, ")");
         const tokenContractsAndSymbols: BaseToken[] = [
           {
@@ -1557,11 +1565,11 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
             symbol: tokenAmount.amount.symbol.code().to_string()
           }))
         ];
-    
+
         const originalBalances = await vxm.tlosNetwork.getBalances({
           tokens: tokenContractsAndSymbols
         });
-    
+
         const finalState = await multiSteps({
           items: [
             {
@@ -1571,21 +1579,21 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
                   relay.smartToken.symbol,
                   tokenAmounts
                 );
-    
+
                 const { smartTokenAmount } = await this.calculateOpposingDeposit({
                   id: relayId,
                   reserve: reserves[0]
                 });
-    
+
                 const fundAmount = smartTokenAmount;
-    
+
                 const fundAction = multiContractAction.fund(
                   this.isAuthenticated,
                   smartTokenAmount.to_string()
                 );
-    
+
                 const actions = [...addLiquidityActions, fundAction];
-    
+
                 try {
                   const txRes = await this.triggerTx(actions);
                   return {
@@ -1621,7 +1629,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
                       new Symbol(relay.smartToken.symbol, 4)
                     ).to_string()
                   );
-    
+
                   const newActions = [...addLiquidityActions, backupFundAction];
                   const txRes = await this.triggerTx(newActions);
                   return { txRes };
@@ -1639,14 +1647,14 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
                   smartTokenSymbol: relay.smartToken.symbol,
                   accountHolder: this.isAuthenticated
                 });
-    
+
                 const aboveZeroBalances = bankBalances
                   .map(balance => ({
                     ...balance,
                     quantity: new Asset(balance.quantity)
                   }))
                   .filter(balance => asset_to_number(balance.quantity) > 0);
-    
+
                 const withdrawActions = aboveZeroBalances.map(balance =>
                   multiContract.withdrawAction(balance.symbl, balance.quantity)
                 );
@@ -1658,7 +1666,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
           ],
           onUpdate
         });
-    
+
         vxm.tlosNetwork.pingTillChange({ originalBalances });
         return finalState.txRes.transaction_id as string;
       }
@@ -1728,7 +1736,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
       )
     );
 
-    console.log("doubleLiquidateActions : ", actions);
+//    console.log("doubleLiquidateActions : ", actions);
     return actions;
   }
 
@@ -1738,7 +1746,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
     onUpdate
   }: LiquidityParams): Promise<string> {
     const relay = await this.relayById(relayId);
-    console.log("removeLiquidity", relay);
+//    console.log("removeLiquidity", relay);
 
     const supply = await fetchTokenStats(
       relay.smartToken.contract,
@@ -1942,7 +1950,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
   }
 
   @action async idToSymbol(id: string): Promise<Sym> {
-    console.log("idToSymbol : ", id);
+//    console.log("idToSymbol : ", id);
     const token = await this.tokenById(id);
     return new Sym(token.symbol, token.precision);
   }
@@ -2052,7 +2060,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
   }
 
   @action async tokenById(id: string) {
-    console.log("tokenById : ", id);
+//    console.log("tokenById : ", id);
     return findOrThrow(
       this.relaysList.flatMap(relay => relay.reserves),
       token => compareString(token.id, id),
@@ -2115,13 +2123,11 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
       convertActions = [...openActions, ...convertActions];
     }
 
-    console.log("convert.convertActions : ", convertActions);
     const txRes = await this.triggerTxAndWatchBalances({
       actions: convertActions,
       tokenIds: [from.id, to.id]
     });
 
-    console.log("convert.txRes : ", txRes);
     this.refresh();
     return txRes.transaction_id;
   }
@@ -2242,6 +2248,7 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
     });
 
     const hydratedRelays = await this.hydrateRelays(path);
+
     const calculatedReturn = findReturn(assetAmount, hydratedRelays);
 
     return {
@@ -2288,7 +2295,6 @@ volume24h: {ETH: 5082.435071735717, USD: 1754218.484042, EUR: 1484719.61129}
   }
 
   @mutation setTokenMeta(tokens: TokenMeta[]) {
-    console.log("setTokenMeta : ", tokens);
     this.tokenMeta = tokens.filter(token => compareString(token.chain, "eos"));
   }
 }

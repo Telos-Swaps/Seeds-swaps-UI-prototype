@@ -30,7 +30,7 @@
             {{
               `1 ${fromToken.symbol} = $${(
                 this.toToken.price * this.reward
-              ).toFixed(2)} USD`
+              ).toFixed(4)} USD`
             }}
           </div>
           <div v-if="fee !== null" :class="['text-white', `font-size-sm`]">
@@ -135,7 +135,7 @@ const appendBaseQuoteQuery = (base: string, quote: string, route: Route) => {
 };
 
 const addDefaultQueryParams = (to: Route): any => {
-  console.log("addDefaultQueryParams::to : ", to);
+//  console.log("addDefaultQueryParams::to : ", to);
   switch (to.params.service) {
     case "tlos":
       return appendBaseQuoteQuery(
@@ -143,24 +143,18 @@ const addDefaultQueryParams = (to: Route): any => {
         buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" }),
         to
       );
-/*
-    case "eth":
-      return appendBaseQuoteQuery(
-        ethReserveAddress,
-        "0x1f573d6fb3f13d689ff844b4ce37794d79a7ff1c",
-        to
-      );
-*/
+
     case "usds":
       return appendBaseQuoteQuery(
         buildTokenId({ contract: "tokens.swaps", symbol: "TLOSD" }),
         buildTokenId({ contract: "tokens.swaps", symbol: "USDT" }),
         to
       );
+
     case "xchain":
       return appendBaseQuoteQuery(
-        buildTokenId({ contract: "tokens.swaps", symbol: "EOS" }),
         buildTokenId({ contract: "tokens.swaps", symbol: "USDT" }),
+        buildTokenId({ contract: "tokens.swaps", symbol: "EOSDT" }),
         to
       );
     default:
@@ -285,8 +279,6 @@ export default class HeroConvert extends Vue {
       case "tlos":
       case "usds":
         return `https://telos.bloks.io/transaction/${this.success}`;
-//      case "eth":
-//        return `https://etherscan.io/tx/${this.success}`;
       default:
         return `https://telos.bloks.io/transaction/${this.success}`;
     }
@@ -297,8 +289,6 @@ export default class HeroConvert extends Vue {
       case "tlos":
       case "usds":
         return `Bloks.io`;
-//      case "eth":
-//        return `Etherscan`;
       default:
         return `Bloks.io`;
     }
@@ -355,7 +345,7 @@ export default class HeroConvert extends Vue {
     } else {
       await this.loadMoreTokens([id]);
       await wait(1);
-      console.log("should be changing the token at", new Date().getTime());
+//      console.log("should be changing the token at", new Date().getTime());
       this.changeFromToken(id);
     }
   }
@@ -367,7 +357,7 @@ export default class HeroConvert extends Vue {
     } else {
       await this.loadMoreTokens([id]);
       await wait(1);
-      console.log("should be changing the token at", new Date().getTime());
+//      console.log("should be changing the token at", new Date().getTime());
       this.changeToToken(id);
     }
   }

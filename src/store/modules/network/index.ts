@@ -13,23 +13,11 @@ const VuexModule = createModule({
 
 export class NetworkModule extends VuexModule.With({ namespaced: "network/" }) {
 //  chains = ["eos", "eth", "usds"];
-  chains = ["usds", "tlos", "xchain"];
+  chains = ["tlos", "usds", "xchain"];
 
   get currentNetwork() {
     // @ts-ignore
-    if (
-      // @ts-ignore
-      store.state.routeModule &&
-      // @ts-ignore
-      store.state.routeModule.params &&
-      // @ts-ignore
-      store.state.routeModule.params.service
-    ) {
-      // @ts-ignore
-      return store.state.routeModule.params.service;
-    } else {
-      return "eth";
-    }
+    return store.state.routeModule.params.service;
   }
 
   get balances() {

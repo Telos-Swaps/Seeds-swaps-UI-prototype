@@ -2,7 +2,7 @@
   <b-container fluid>
     <b-row align-v="center" class="footer">
       <b-col cols="4">
-        <a :href="website" target="_blank" class="orange">Telos$ </a
+        <a :href="website" target="_blank" class="orange">Telos Swaps </a
         ><span class="text">© 2020</span>
       </b-col>
       <b-col cols="8" class="d-flex justify-content-end align-middle">
@@ -17,18 +17,35 @@
           </li>
           <li class="list-inline-item">
             <span class="text">
-              <a href="https://github.com" target="_blank"
-                ><font-awesome-icon
-                  :style="{ color: 'white' }"
-                  :icon="['fab', 'github']"
-                  fixed-width
-              /></a>
-              <a href="https://t.me/tlosd" target="_blank"
+
+              <a href="https://t.me/tswaps" target="_blank"
                 ><font-awesome-icon
                   :style="{ color: 'white' }"
                   :icon="['fab', 'telegram']"
                   fixed-width
               /></a>
+
+              <a href="https://twitter.com/tswaps_com" target="_blank"
+                ><font-awesome-icon
+                  :style="{ color: 'white' }"
+                  :icon="['fab', 'twitter']"
+                  fixed-width
+              /></a>
+
+              <a href="https://github.com/Telos-Swaps" target="_blank"
+                ><font-awesome-icon
+                  :style="{ color: 'white' }"
+                  :icon="['fab', 'github']"
+                  fixed-width
+              /></a>
+
+              <a href="https://medium.com/@tswaps" target="_blank"
+              ><font-awesome-icon
+                  :style="{ color: 'white' }"
+                  :icon="['fab', 'medium']"
+                  fixed-width
+              /></a>
+
             </span>
           </li>
         </ul>
@@ -42,7 +59,7 @@ import { Prop, Component, Vue } from "vue-property-decorator";
 @Component({})
 export default class MyFooter extends Vue {
   get website() {
-    return "https://telosd.com";
+    return "https://tswaps.com";
   }
   get appVersion() {
     return JSON.parse(

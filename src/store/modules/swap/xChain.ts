@@ -110,7 +110,7 @@ const environmentCanBeTrusted = () => {
 const trusted = environmentCanBeTrusted();
 
 const contractDb: BaseToken[] = [
-  { contract: "btc.ptokens", symbol: "PBTC" }
+  //  { contract: "btc.ptokens", symbol: "PBTC" }
   //  { contract: "tokens.swaps", symbol: "BTC" },
   //  { contract: "tokens.swaps", symbol: "EOS" },
   //  { contract: "tokens.swaps", symbol: "BNT" },
@@ -218,7 +218,7 @@ export class xChainModule
           console.warn("Failed to find name", token.symbol);
           name = token.symbol;
           logo =
-            "https://raw.githubusercontent.com/EOSZAio/TLOSD/master/icons/placeholder.jpg";
+            "https://raw.githubusercontent.com/Telos-Swaps/TLOSD/master/icons/placeholder.jpg";
         }
 
         const baseToken: BaseToken = {
@@ -270,7 +270,7 @@ export class xChainModule
       retryPromise(() => get_settings(rpc, contract), 4, 500)
     ]);
 
-    console.log("xChain.fetchContract", tokens);
+//    console.log("xChain.fetchContract", tokens);
     return { tokens, volume, settings, contract };
   }
 
@@ -285,7 +285,7 @@ export class xChainModule
   }
 
   @action async checkPrices(contracts: string[]) {
-    console.log(contracts);
+//    console.log(contracts);
 
     const prices = await Promise.all(
       contracts.map(async contract => {
@@ -307,7 +307,7 @@ export class xChainModule
   }
 
   @action async refresh() {
-    console.log("refresh called on xchain, doing nothing");
+//    console.log("refresh called on xchain, doing nothing");
     const registryData = await getSxContracts();
     if (this.isAuthenticated) {
       vxm.tlosNetwork.getBalances({
@@ -345,7 +345,7 @@ export class xChainModule
     );
 
     const uniqTokens = _.uniqBy(allWithId, "id").map(x => x.id);
-    console.log("xChain.init.uniqTokens", uniqTokens);
+//    console.log("xChain.init.uniqTokens", uniqTokens);
 
     const newTokens = uniqTokens.map(
       (id): SxToken => {
@@ -383,7 +383,7 @@ export class xChainModule
       }
     );
 
-    console.log("xChain.init.newTokens", newTokens);
+//    console.log("xChain.init.newTokens", newTokens);
     this.setNewTokens(newTokens);
     await wait(10);
   }
@@ -435,7 +435,7 @@ export class xChainModule
     );
 
     const uniqTokens = _.uniqBy(allWithId, "id").map(x => x.id);
-    console.log("xChain.init.uniqTokens", uniqTokens);
+//    console.log("xChain.init.uniqTokens", uniqTokens);
 
     const newTokens = uniqTokens.map(
       (id): SxToken => {
@@ -473,7 +473,7 @@ export class xChainModule
       }
     );
 
-    console.log("xChain.init.newTokens", newTokens);
+//    console.log("xChain.init.newTokens", newTokens);
     this.setNewTokens(newTokens);
     this.moduleInitiated();
     await wait(10);

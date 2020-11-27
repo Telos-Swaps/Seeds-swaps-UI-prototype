@@ -160,12 +160,12 @@ export default class Navigation extends Vue {
       },
       {
         label: "Telos->EOS",
-        destination: createDirectRoute("Xtransfer", {
+        destination: createDirectRoute("Bridge", {
           account: this.isAuthenticated
         }),
         render: this.selectedService!.features.includes(Feature.Bridge),
         icon: "wallet",
-        active: this.$route.name == "Xtransfer",
+        active: this.$route.name == "Bridge",
         disabled: false
       },
       ...[
@@ -201,7 +201,7 @@ export default class Navigation extends Vue {
     });
 
     if (moduleId === "xchain") {
-      this.$router.push({ name: "Xtransfer", ...extendXtransferRouter(moduleId) });
+      this.$router.push({ name: "Bridge", ...extendXtransferRouter(moduleId) });
     } else {
       this.$router.push({ name: "Tokens", ...extendRouter(moduleId) });
     }

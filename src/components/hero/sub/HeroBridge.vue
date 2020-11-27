@@ -22,10 +22,9 @@
                 class="fa-2x text-white"
               />
             </div>
-            <span @click="switchChain" class="cursor font-size-sm text-white-50">
+            <!--span @click="switchChain" class="cursor font-size-sm text-white-50">
               <font-awesome-icon icon="exchange-alt" fixed-width />SWITCH
-            </span>
-
+            </span-->
             <!--div class="d-flex justify-content-center">
               <b-btn
                 @click="initXTransfer" variant="info" v-ripple class="px-4 py-2 d-block">
@@ -33,7 +32,6 @@
                 <span class="font-w700">SWITCH</span>
               </b-btn>
             </div-->
-
             <div class="mb-3 mt-3">
               <span class="text-white font-size-sm"
                 >Value: {{ usdValue }} USD</span
@@ -152,7 +150,7 @@ export default class HeroBridge extends Vue {
   }
 
   async initXTransfer() {
-    console.log("HeroBridge.initXTransfer");
+//    console.log("HeroBridge.initXTransfer");
     await vxm.tlosNetwork.xtransfer({
       to: this.recipient,
       memo: this.memo,
@@ -174,11 +172,11 @@ export default class HeroBridge extends Vue {
   }
 
   switchChain() {
-    console.log("switch between Telos and EOS");
+//    console.log("switch between Telos and EOS");
     vxm.tlosWallet.setAccessContext((vxm.tlosWallet.chain == Chain.telos) ? Chain.eos : Chain.telos);
     vxm.xchainBancor.updateStats();
 //    vxm.xchainBancor.switchChain((vxm.tlosWallet.chain == Chain.telos) ? Chain.eos : Chain.telos);
-    console.log((vxm.tlosWallet.chain == Chain.telos) ? "Switched from EOS to Telos" : "Switched from Telos to EOS");
+//    console.log((vxm.tlosWallet.chain == Chain.telos) ? "Switched from EOS to Telos" : "Switched from Telos to EOS");
   }
 
 //  navConvert() {

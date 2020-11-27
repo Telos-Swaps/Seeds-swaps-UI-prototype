@@ -11,16 +11,18 @@ import {
 } from "@/types/bancor";
 import { vxm } from "@/store";
 import {
+  get_bancor_output,
   get_settings,
+  get_connector,
   get_volume,
   get_rate,
-  get_price,
   get_inverse_rate,
   Tokens,
   Settings,
   get_tokens,
   Token,
   Volume,
+  Connector,
   get_slippage,
   get_fee,
   get_spot_price
@@ -93,15 +95,15 @@ interface SxToken {
 
 const addNumbers = (acc: number, num: number) => acc + num;
 
-const accumulateLiq = (acc: SxToken, token: SxToken) => ({
-  ...acc,
-  liqDepth: acc.liqDepth + token.liqDepth
-});
+//const accumulateLiq = (acc: SxToken, token: SxToken) => ({
+//  ...acc,
+//  liqDepth: acc.liqDepth + token.liqDepth
+//});
 
-const accumulateVolume = (acc: SxToken, token: SxToken) => ({
-  ...acc,
-  volume24h: acc.volume24h + token.volume24h
-});
+//const accumulateVolume = (acc: SxToken, token: SxToken) => ({
+//  ...acc,
+//  volume24h: acc.volume24h + token.volume24h
+//});
 
 const tokensToArray = (tokens: Tokens): Token[] =>
   Object.keys(tokens).map(key => tokens[key]);
@@ -139,27 +141,38 @@ const tokenToId = (token: Token) => {
   });
 };
 
+/*
+const connector = {
+  contract: "tlosdx.swaps",
+  smartToken: {
+    contract: "relays.swaps",
+    symbol: "8,TLOSDX"
+  },
+  reserves: [
+    {
+      contract: "tokens.swaps",
+      symbol: "4,TLOSD"
+    },
+    {
+      contract: "eosio.token",
+      symbol: "4,TLOS"
+    }
+  ]
+};
+*/
+
 interface AddedVolume extends Token {
   volume24h?: number;
 }
 
 const contract = process.env.VUE_APP_USDSTABLE!;
 
-interface SXToken {
-  id: string;
-  symbol: string;
-  precision: number;
-  contract: string;
-  volume24h: number;
-  price: number;
-  liqDepth: number;
-}
-
 interface Stat {
   tokens: Tokens;
   volume: Volume[];
   settings: Settings;
   contract: string;
+//  connector: Connector;
 }
 
 interface MiniRelay {
@@ -191,6 +204,13 @@ export class UsdBancorModule
   contracts: string[] = [];
   stats: Stat[] = [];
   lastLoaded: number = 0;
+
+  connector: Connector = {
+    tlos_liquidity_depth: 50.0,
+    tlosd_liquidity_depth: 1.0,
+    price: 0.02,
+    volume_24h: 0.0
+  };
 
   get wallet() {
     return "tlos";
@@ -232,7 +252,7 @@ export class UsdBancorModule
           console.warn("Failed to find name", token.symbol);
           name = token.symbol;
           logo =
-            "https://raw.githubusercontent.com/EOSZAio/TLOSD/master/icons/placeholder.jpg";
+            "https://raw.githubusercontent.com/Telos-Swaps/TLOSD/master/icons/placeholder.jpg";
         }
 
         const baseToken: BaseToken = {
@@ -281,7 +301,7 @@ export class UsdBancorModule
   }
 
   @action async checkPrices(contracts: string[]) {
-    console.log(contracts);
+//    console.log(contracts);
 
     const prices = await Promise.all(
       contracts.map(async contract => {
@@ -299,7 +319,7 @@ export class UsdBancorModule
       })
     );
 
-    console.log("usdsPrices", prices);
+//    console.log("usdsPrices", prices);
   }
 
   @action async refresh() {
@@ -319,6 +339,9 @@ export class UsdBancorModule
     const allTokens = await Promise.all(contracts.map(this.fetchContract));
     this.setStats(allTokens);
 
+    this.connector = await retryPromise(() => get_connector(rpc), 4, 500);
+//    console.log("refresh.connector", this.connector);
+
     retryPromise(() => this.updateStats(), 4, 1000);
 
     const all = await Promise.all(
@@ -326,7 +349,8 @@ export class UsdBancorModule
         this.buildTokens({
           tokens: token.tokens,
           volume: token.volume[0],
-          settings: token.settings
+          settings: token.settings,
+          connector: this.connector
         })
       )
     );
@@ -397,19 +421,23 @@ export class UsdBancorModule
 
     const contracts = registryData.map(x => x.contract);
 
-    this.checkPrices(contracts);
+    await this.checkPrices(contracts);
     this.setContracts(contracts);
     const allTokens = await Promise.all(contracts.map(this.fetchContract));
     this.setStats(allTokens);
 
-    retryPromise(() => this.updateStats(), 4, 1000);
+    this.connector = await retryPromise(() => get_connector(rpc), 4, 500);
+//    console.log("init.connector", this.connector);
+
+    await retryPromise(() => this.updateStats(), 4, 1000);
 
     const all = await Promise.all(
       allTokens.flatMap(token =>
         this.buildTokens({
           tokens: token.tokens,
           volume: token.volume[0],
-          settings: token.settings
+          settings: token.settings,
+          connector: this.connector
         })
       )
     );
@@ -470,11 +498,13 @@ export class UsdBancorModule
   @action async buildTokens({
     tokens,
     volume,
-    settings
+    settings,
+    connector
   }: {
     tokens: Tokens;
     settings: Settings;
     volume: Volume;
+    connector: Connector;
   }) {
     const tokensArray: Token[] = tokensToArray(tokens);
     const addedPossibleVolumes: AddedVolume[] = tokensArray.map(token => {
@@ -489,32 +519,50 @@ export class UsdBancorModule
       addedPossibleVolumes.map(async token => {
         const symbolName = token.sym.code().to_string();
         const precision = token.sym.precision();
-        const contract = trusted
-          ? token.contract.to_string()
-          : symbolNameToContract(symbolName);
+        const contract = trusted ? token.contract.to_string() : symbolNameToContract(symbolName);
 
-        const volume24h = token.volume24h || 0;
+//        console.log("buildTokens", token.token_type.to_string());
+        if (token.token_type.to_string() == "connector") {
+          const volume24h = connector.volume_24h;
+          const price = connector.price;
+          const liqDepth = connector.tlosd_liquidity_depth;
 
-        const rate = await get_spot_price(
-          "USDT",
-          token.sym.code(),
-          tokens,
-          settings
-        );
+//          console.log("buildTokens.connector", symbol, volume24h, price, liqDepth);
 
-        const price = compareString(symbolName, "USDT") ? 1 : rate;
+          return {
+            id: buildTokenId({ contract, symbol: symbolName }),
+            symbol: symbolName,
+            precision,
+            contract,
+            volume24h,
+            price,
+            liqDepth
+          };
+        } else {
+          const volume24h = token.volume24h || 0;
+          const rate = await get_spot_price(
+            "USDT",
+            token.sym.code(),
+            tokens,
+            settings
+          );
+          const price = compareString(symbolName, "USDT") ? 1 : rate;
 
-        return {
-          id: buildTokenId({ contract, symbol: symbolName }),
-          symbol: symbolName,
-          precision,
-          contract,
-          volume24h,
-          price,
-          liqDepth: asset_to_number(token.balance) * price
-        };
+//          console.log("buildTokens", symbol, volume24h, price);
+
+          return {
+            id: buildTokenId({ contract, symbol: symbolName }),
+            symbol: symbolName,
+            precision,
+            contract,
+            volume24h,
+            price,
+            liqDepth: asset_to_number(token.balance) * price
+          };
+        }
       })
     );
+
     return newTokens;
   }
 
@@ -543,7 +591,7 @@ export class UsdBancorModule
       compareString(token.symbol, symbolName)
     );
     if (this.isAuthenticated) {
-      vxm.tlosNetwork.getBalances({
+      await vxm.tlosNetwork.getBalances({
         tokens: tokens.map(token => ({
           contract: token.contract,
           symbol: token.symbol
@@ -566,6 +614,7 @@ export class UsdBancorModule
 
     const fromToken = await this.tokenById(propose.from.id);
     const toToken = await this.tokenById(propose.to.id);
+
     const tokens = [fromToken, toToken];
 
     const amountAsset = await this.viewAmountToAsset(propose.from);
@@ -577,6 +626,60 @@ export class UsdBancorModule
       toId: propose.to.id
     });
 
+    let connectors = ["TLOS", "TLOSD"];
+    let converter = "";
+    let memo = "";
+
+    if (
+      connectors.indexOf(fromToken.symbol) >= 0 &&
+      connectors.indexOf(toToken.symbol) >= 0
+    ) {
+      // Case TLOS<->TLOSD, use V1 converter
+      converter = "bancor.tbn";
+      memo = "1,tlosdx.swaps " + toToken.symbol + ",0.0," + accountName;
+    } else if (fromToken.symbol == "TLOS") {
+      // Case from=TLOS, to<>TLOSD
+      // 1,tlosdx.swaps TLOSD telosd.swaps USDT,0.0,qwertyqwerty
+      converter = "bancor.tbn";
+      memo =
+        "1,tlosdx.swaps TLOSD telosd.swaps " +
+        toToken.symbol +
+        ",0.0," +
+        accountName;
+    } else if (toToken.symbol == "TLOS") {
+      // Case from<>TLOSD, to=TLOS
+      // 1,telosd.swaps TLOSD tlosdx.swaps TLOS,0.0,qwertyqwerty
+      converter = "bancor.tbn";
+      memo = "1,telosd.swaps TLOSD tlosdx.swaps TLOS,0.0," + accountName;
+    } else {
+      // Case not involving TLOS
+      converter = poolReward.id;
+      memo = toToken.symbol;
+    }
+
+    //    console.log("data :",'["', accountName, '", "', converter, '", "', amountAsset.to_string(), '", "', memo, '"]');
+    //    console.log("memo :", memo);
+
+    // 1,tlosdx.swaps TLOSD,0.9890,qwertyqwerty
+    // 1,tlosdx.swaps TLOSD,0.0,   qwertyqwerty
+    // USDT
+    // TLOSD@bancor.tbn|1,tlosdx.swaps TLOS,0.0,admin.swaps;USDT->TLOSD->TLOS
+    // 1,tlosdx.swaps TLOSD,0.0,telosd.swaps;USDT@qwertyqwerty
+    // TLOS@bancor.tbn|1,tlosdx.swaps TLOSD,0.0,qwertyqwerty
+
+    // TLOSD@bancor.tbn|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // TLOSD@qwertyqwerty|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // TLOSD@qwertyqwerty|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // 1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // TLOSD@bancor.tbn|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // Try switch off mine.reward
+
+    // TLOSD@bancor.tbn|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // TLOSD@bancor.tbn|1,tlosdx.swaps TLOS,0.0,qwertyqwerty;USDT->TLOSD->TLOS
+    // 1,tlosdx.swaps TLOSD,0.0,telosd.swaps;USDT@qwertyqwerty
+    // 1,tlosdx.swaps TLOSD telosd.swaps USDT,0.0,qwertyqwerty
+    // 1,telosd.swaps TLOSD tlosdx.swaps TLOS,0.0,qwertyqwerty
+
     const [txRes, originalBalances] = await Promise.all([
       this.triggerTx([
         {
@@ -584,8 +687,8 @@ export class UsdBancorModule
           name: "transfer",
           data: {
             from: accountName,
-            to: poolReward.id,
-            memo: toToken.symbol,
+            to: converter,
+            memo: memo,
             quantity: amountAsset.to_string()
           }
         }
@@ -594,7 +697,7 @@ export class UsdBancorModule
         tokens
       })
     ]);
-    vxm.tlosNetwork.pingTillChange({ originalBalances });
+    await vxm.tlosNetwork.pingTillChange({ originalBalances });
 
     return txRes.transaction_id;
   }
@@ -608,7 +711,7 @@ export class UsdBancorModule
     const biggestGap = 5000;
     const timeNow = new Date().getTime();
     if (this.lastLoaded + biggestGap < timeNow) {
-      this.updateStats();
+      await this.updateStats();
     }
   }
 
@@ -625,10 +728,7 @@ export class UsdBancorModule
       const amountAsset = await this.viewAmountToAsset(data.from);
       const opposingSymbol = symbol(toToken.symbol, toToken.precision);
 
-      return {
-        opposingSymbol,
-        amountAsset
-      };
+      return { opposingSymbol, amountAsset };
     } else {
       const data = propose as ProposedToTransaction;
 
@@ -637,10 +737,7 @@ export class UsdBancorModule
       const amountAsset = await this.viewAmountToAsset(data.to);
       const opposingSymbol = symbol(fromToken.symbol, fromToken.precision);
 
-      return {
-        opposingSymbol,
-        amountAsset
-      };
+      return { opposingSymbol, amountAsset };
     }
   }
 
@@ -723,21 +820,64 @@ export class UsdBancorModule
   @action async getReturn(propose: ProposedFromTransaction) {
     if (compareString(propose.from.id, propose.toId))
       throw new Error("Cannot convert a token to itself.");
-    this.checkRefresh();
+    await this.checkRefresh();
+
+//    console.log("getReturn.connector", this.connector);
+//    console.log("getReturn.propose", propose, propose.from.id, propose.toId, propose.from.amount);
+
+    // Hack to handle TLOS<->TLOSD
+    // From : "eosio.token-TLOS" -> "tokens.swaps-TLOSD"
+    //        {id: "eosio.token-TLOS", amount: "1"}
+    // To   : "tokens.swaps-TLOSD" -> "eosio.token-TLOS"
+    let additional_fee = 0.0;
+    let factor = 1.0;
+    if (propose.from.id == "eosio.token-TLOS") {
+      propose.from.id = "tokens.swaps-TLOSD";
+      // propose.from.amount = (Number(propose.from.amount) * Number(this.connector[2])).toString();
+      // 0: 154200.619, 1: 2121.502, 2: 0.01375806409700599, 3: "2.3043"
+      const base_reserve = Number(this.connector.tlos_liquidity_depth);
+      const quote_reserve = Number(this.connector.tlosd_liquidity_depth);
+      const quantity = Number(propose.from.amount);
+      // Hardcoded (1 - fee) * bancor return
+      propose.from.amount = (0.9925 * get_bancor_output(base_reserve, quote_reserve, quantity)).toString();
+      additional_fee = 0.0027 * Number(propose.from.amount) / 0.9925;
+    }
+    if (propose.toId == "eosio.token-TLOS") {
+      propose.toId = "tokens.swaps-TLOSD";
+      // propose.from.amount = (Number(propose.from.amount) / Number(this.connector[2])).toString();
+      const base_reserve = Number(this.connector.tlosd_liquidity_depth);
+      const quote_reserve = Number(this.connector.tlos_liquidity_depth);
+      const quantity = Number(propose.from.amount);
+      // Hardcoded (1 - fee) * bancor return
+      propose.from.amount = (0.9925 * get_bancor_output(base_reserve, quote_reserve, quantity)).toString();
+      additional_fee = 0.0027 * Number(propose.from.amount) / 0.9925;
+      factor = base_reserve / quote_reserve;
+    }
+
+//    console.log("getReturn.propose", propose, propose.from.id, propose.toId, propose.from.amount);
 
     const bestReturn = await this.bestFromReturn(propose);
 
+    // Need to update fee and slippage too
+    // TODO fee specified in "to" token units
+    let total_fee = number_to_asset((asset_to_number(bestReturn.amount.fee) + additional_fee) * factor, bestReturn.amount.fee.symbol).to_string();
+    let slippage = bestReturn.amount.slippage * factor;
+
+//    console.log("getReturn.bestReturn", bestReturn.amount.fee.to_string(), additional_fee, slippage, factor);
+
     return {
       amount: String(asset_to_number(bestReturn.amount.rate)),
-      fee: shortAssetString(bestReturn.amount.fee),
-      slippage: bestReturn.amount.slippage
+//      fee: shortAssetString(bestReturn.amount.fee),
+      fee: total_fee,
+//      slippage: bestReturn.amount.slippage
+      slippage: slippage
     };
   }
 
   @action async getCost(propose: ProposedToTransaction) {
     if (compareString(propose.fromId, propose.to.id))
       throw new Error("Cannot convert a token to itself.");
-    this.checkRefresh();
+    await this.checkRefresh();
 
     const cheapestCost = await this.bestToReturn(propose);
 
