@@ -4,7 +4,6 @@ import Vuex from "vuex";
 import { GeneralModule } from "./modules/general";
 import { EosTransitModule } from "./modules/wallet/tlosWallet";
 import { TlosBancorModule } from "./modules/swap/tlosBancor";
-import { UsdBancorModule } from "./modules/swap/usdSx";
 import { BancorModule } from "./modules/swap/index";
 import { WalletModule } from "./modules/wallet/index";
 import { NetworkModule } from "./modules/network/index";
@@ -15,7 +14,6 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   modules: {
-    ...extractVuexModule(UsdBancorModule),
     ...extractVuexModule(TlosBancorModule),
     ...extractVuexModule(GeneralModule),
     ...extractVuexModule(EosTransitModule),
@@ -32,7 +30,6 @@ export const vxm = {
   wallet: createProxy(store, WalletModule),
   tlosWallet: createProxy(store, EosTransitModule),
   tlosBancor: createProxy(store, TlosBancorModule),
-  usdsBancor: createProxy(store, UsdBancorModule),
   bancor: createProxy(store, BancorModule),
   tlosNetwork: createProxy(store, TlosNetworkModule),
   network: createProxy(store, NetworkModule)
