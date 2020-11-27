@@ -406,13 +406,12 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
 
   const parsedTradeData = rawTradeData.rows;
 
-  let usdPriceOfTlos = await vxm.bancor.fetchUsdPriceOfTlos();
+  let usdPriceOfSeeds = await vxm.bancor.fetchusdPriceOfSeeds();
   // TODO read usdTlos24hPriceMove from CMC, use as follows
   // hardcoded for now
   //  let usdTlos24hPriceMove = -4.44 / 100.0;
   // let usdTlos24hPriceMove = 0.0 / 100.0;
   let usdTlos24hPriceMove = await vxm.bancor.fetchUsd24hPriceMove();
-  //  console.log("usdTlos24hPriceMove",usdTlos24hPriceMove);
 
   let newTlosObj: any = {};
   newTlosObj.id = 1;
@@ -420,7 +419,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   newTlosObj.name = newTlosObj.code;
   newTlosObj.primaryCommunityImageName = newTlosObj.code;
   newTlosObj.liquidityDepth = 0.0;
-  newTlosObj.price = usdPriceOfTlos;
+  newTlosObj.price = usdPriceOfSeeds;
   //  newTlosObj.priceTlos = 1;
   newTlosObj.change24h = 100.0 * usdTlos24hPriceMove;
   let volume24h: any = {};
@@ -443,19 +442,17 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
       itemObject.liquidity_depth
         .find((token: any) => compareString(token.key, "SEEDS"))
         .value.split(" ")[0] *
-      usdPriceOfTlos *
+      usdPriceOfSeeds *
       2.0;
     newObj.price =
       itemObject.price.find((token: any) => compareString(token.key, "SEEDS"))
-        .value * usdPriceOfTlos;
-    //    newObj.priceTlos =
-    //      itemObject.price.find((token: any) => compareString(token.key, "TLOS")).value;
+        .value * usdPriceOfSeeds;
 
     // This is to convert from % change in TLOS to USD
     let raw24hChange =
       itemObject.price_change_24h.find((token: any) =>
         compareString(token.key, "SEEDS")
-      ).value * usdPriceOfTlos;
+      ).value * usdPriceOfSeeds;
     let a = 1.0 / (1.0 + usdTlos24hPriceMove);
     newObj.change24h =
       100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
@@ -464,7 +461,7 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
     volume24h.USD =
       itemObject.volume_24h
         .find((token: any) => compareString(token.key, "SEEDS"))
-        .value.split(" ")[0] * usdPriceOfTlos;
+        .value.split(" ")[0] * usdPriceOfSeeds;
     newObj.volume24h = volume24h;
 
     // TODO smart token APR needs to be incuded in "pools" tab, calculations follow, APR in TLOS

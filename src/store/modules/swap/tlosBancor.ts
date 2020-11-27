@@ -503,7 +503,7 @@ export class TlosBancorModule
   relayFeed: RelayFeed[] = [];
   loadingPools: boolean = true;
   usdPrice = 0;
-  usdPriceOfTlos = 0;
+  usdPriceOfSeeds = 0;
   usdTlos24hPriceMove = 0.0;
   tokenMeta: TokenMeta[] = [];
   moreTokensAvailable = false;
@@ -608,7 +608,7 @@ export class TlosBancorModule
       {
         ...seeds,
         id: buildTokenId(seeds),
-        usdValue: this.usdPriceOfTlos
+        usdValue: this.usdPriceOfSeeds
       }
     ].map(choice => ({
       ...choice,
@@ -1138,13 +1138,13 @@ export class TlosBancorModule
       return this.refresh();
     }
     try {
-      const [usdPriceOfTlos, v2Relays, tokenMeta] = await Promise.all([
-        vxm.bancor.fetchUsdPriceOfTlos(),
+      const [usdPriceOfSeeds, v2Relays, tokenMeta] = await Promise.all([
+        vxm.bancor.fetchusdPriceOfSeeds(),
         fetchMultiRelays(),
         getTokenMeta()
       ]);
       this.setTokenMeta(tokenMeta);
-      this.setTlosPrice(usdPriceOfTlos);
+      this.setTlosPrice(usdPriceOfSeeds);
 //      this.setTlos24hPriceMove(-4.44);
       this.setTlos24hPriceMove(0.00);
 
@@ -1208,7 +1208,7 @@ export class TlosBancorModule
       buildTwoFeedsFromRelay(relay, [
         { symbol: "SEEDS", unitPrice: 0.02 },
         { symbol: "TLOSD", unitPrice: 1 },
-        { symbol: "TLOS", unitPrice: this.usdPriceOfTlos }
+        { symbol: "TLOS", unitPrice: this.usdPriceOfSeeds }
       ])
     );
     this.updateRelayFeed(feeds);
@@ -2050,7 +2050,7 @@ export class TlosBancorModule
   }
 
   @mutation setTlosPrice(price: number) {
-    this.usdPriceOfTlos = price;
+    this.usdPriceOfSeeds = price;
   }
 
   @mutation setTlos24hPriceMove(priceMove: number) {

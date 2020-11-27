@@ -39,7 +39,7 @@ interface RootParam {
 
 const moduleIds: { label: string; id: string }[] = [
   {
-    label: "Telos Swaps",
+    label: "Seeds Swaps",
     id: "tlos"
   }
 ];
@@ -55,7 +55,7 @@ interface Module {
 export class BancorModule extends VuexModule.With({
   namespaced: "bancor/"
 }) {
-  usdPriceOfTlos: TlosPrice = {
+  usdPriceOfSeeds: TlosPrice = {
     price: null,
     lastChecked: 0
   };
@@ -253,22 +253,11 @@ export class BancorModule extends VuexModule.With({
           Promise.resolve(promise).then(reject, resolve)
         );
       const any = (arr: any[]) => reverse(Promise.all(arr.map(reverse)));
-      // TODO : Migrate price feed to Newdex
-//      const res1 = await any([fetchNewdexEosPriceOfTlos()]);
-//      const res2 = await any([fetchCoinGechoUsdPriceOfEos()]);
-
-//      // @ts-ignore
-//      const p1 = res1.price != null ? res1.price as number : 0.0;
-//      // @ts-ignore
-//      const usd24hPriceMove = res1.percent_change_24h != null ? res1.percent_change_24h as number : 0.0;
-//      // @ts-ignore
-//      const p2 = res2 != null ? res2 as number : 0.0;
-//      const usdPrice = p1 * p2;
 
       const res = await any([fetchUsdPriceOfSeeds()]);
       const usdPrice = res as number;
 
-      this.setUsdPriceOfTlos({
+      this.setUsdPriceOfSeeds({
         price: usdPrice,
         lastChecked: new Date().getTime()
       });
@@ -280,19 +269,19 @@ export class BancorModule extends VuexModule.With({
     }
   }
 
-  @action async fetchUsdPriceOfTlos() {
+  @action async fetchusdPriceOfSeeds() {
     const timeNow = new Date().getTime();
     const millisecondGap = 900000;
     const makeNetworkRequest =
-      !this.usdPriceOfTlos.lastChecked ||
-      this.usdPriceOfTlos.lastChecked + millisecondGap < timeNow;
+      !this.usdPriceOfSeeds.lastChecked ||
+      this.usdPriceOfSeeds.lastChecked + millisecondGap < timeNow;
     return makeNetworkRequest
       ? this.getUsdPrice()
-      : (this.usdPriceOfTlos.price as number);
+      : (this.usdPriceOfSeeds.price as number);
   }
 
-  @mutation setUsdPriceOfTlos(usdPriceOfTlos: TlosPrice) {
-    this.usdPriceOfTlos = usdPriceOfTlos;
+  @mutation setUsdPriceOfSeeds(usdPriceOfSeeds: TlosPrice) {
+    this.usdPriceOfSeeds = usdPriceOfSeeds;
   }
 
   @action async fetchUsd24hPriceMove() {

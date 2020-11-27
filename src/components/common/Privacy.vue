@@ -6,13 +6,13 @@
           <div class="content d-flex flex-column align-items-start">
             <h1 class="align-self-center">Privacy Policy</h1>
             <div class="wrapper">
-              <h2>Telos Swaps</h2>
+              <h2>Seeds Swaps</h2>
               <p>
-                At Telos Swaps, accessible from
+                At Seeds Swaps, accessible from
                 <a :href="website" class="orange" target="_blank">tswaps.com</a
                 >, one of our main priorities is the privacy of our visitors.
                 This Privacy Policy document contains types of information that
-                is collected and recorded by Telos Swaps and how we use it.
+                is collected and recorded by Seeds Swaps and how we use it.
               </p>
               <p>
                 If you have additional questions or require more information
@@ -23,22 +23,22 @@
               <h3>GENERAL DATA PROTECTION REGULATION (GDPR)</h3>
               <p>We are a Data Controller of your information.</p>
               <p>
-                Telos Swaps legal basis for collecting and using the personal
+                Seeds Swaps legal basis for collecting and using the personal
                 information described in this Privacy Policy depends on the
                 Personal Information we collect and the specific context in
                 which we collect the information:
               </p>
               <ul>
-                <li>Telos Swaps needs to perform a contract with you</li>
-                <li>You have given Telos Swaps permission to do so</li>
+                <li>Seeds Swaps needs to perform a contract with you</li>
+                <li>You have given Seeds Swaps permission to do so</li>
                 <li>
-                  Processing your personal information is in Telos Swaps
+                  Processing your personal information is in Seeds Swaps
                   interests
                 </li>
-                <li>Telos Swaps needs to comply with the law</li>
+                <li>Seeds Swaps needs to comply with the law</li>
               </ul>
               <p>
-                Telos Swaps will retain your personal information only for as
+                Seeds Swaps will retain your personal information only for as
                 long as is necessary for the purposes set out in this Privacy
                 Policy. We will retain and use your information to the extent
                 necessary to comply with our legal obligations, resolve
@@ -67,7 +67,7 @@
               </ul>
               <h2>Log Files</h2>
               <p>
-                Telos Swaps follows a standard procedure of using log files.
+                Seeds Swaps follows a standard procedure of using log files.
                 These files log visitors when they visit websites. All hosting
                 companies do this as a part of hosting services’ analytics. The
                 information collected by log files include internet protocol
@@ -80,7 +80,7 @@
               </p>
               <h2>COOKIES AND WEB BEACONS</h2>
               <p>
-                Like any other website, Telos Swaps uses ‘cookies’. These
+                Like any other website, Seeds Swaps uses ‘cookies’. These
                 cookies are used to store information including visitors’
                 preferences, and the pages on the website that the visitor
                 accessed or visited. The information is used to optimize the
@@ -90,12 +90,12 @@
               <h2>PRIVACY POLICIES</h2>
               <p>
                 You may consult this list to find the Privacy Policy for each of
-                the advertising partners of Telos Swaps.
+                the advertising partners of Seeds Swaps.
               </p>
               <p>
                 Third-party ad servers or ad networks uses technologies like
                 cookies, JavaScript, or Web Beacons that are used in their
-                respective advertisements and links that appear on Telos Swaps,
+                respective advertisements and links that appear on Seeds Swaps,
                 which are sent directly to users’ browser. They automatically
                 receive your IP address when this occurs. These technologies are
                 used to measure the effectiveness of their advertising campaigns
@@ -103,12 +103,12 @@
                 websites that you visit.
               </p>
               <p>
-                Note that Telos Swaps has no access to or control over these
+                Note that Seeds Swaps has no access to or control over these
                 cookies that are used by third-party advertisers.
               </p>
               <h2>THIRD PARTY PRIVACY POLICIES</h2>
               <p>
-                Telos Swaps’s Privacy Policy does not apply to other advertisers
+                Seeds Swaps’s Privacy Policy does not apply to other advertisers
                 or websites. Thus, we are advising you to consult the respective
                 Privacy Policies of these third-party ad servers for more
                 detailed information. It may include their practices and
@@ -130,7 +130,7 @@
                 activity.
               </p>
               <p>
-                Telos Swaps does not knowingly collect any Personal Identifiable
+                Seeds Swaps does not knowingly collect any Personal Identifiable
                 Information from children under the age of 13. If you think that
                 your child provided this kind of information on our website, we
                 strongly encourage you to contact us immediately and we will do
@@ -142,7 +142,7 @@
                 This privacy policy (GDPR Privacy Policy created at
                 GDPRPrivacyNotice.com) applies only to our online activities and
                 is valid for visitors to our website with regards to the
-                information that they shared and/or collect in Telos Swaps. This
+                information that they shared and/or collect in Seeds Swaps. This
                 policy is not applicable to any information collected offline or
                 via channels other than this website.
               </p>
