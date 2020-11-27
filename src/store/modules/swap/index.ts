@@ -15,10 +15,7 @@ import {
 import { vxm } from "@/store";
 import { store } from "../../../store";
 import { compareString, updateArray } from "@/api/helpers";
-import {
-  fetchNewdexEosPriceOfTlos,
-  fetchCoinGechoUsdPriceOfEos
-} from "@/api/helpers";
+import { fetchUsdPriceOfSeeds } from "@/api/helpers";
 import { defaultModule } from "@/router";
 
 interface TlosPrice {
@@ -257,40 +254,24 @@ export class BancorModule extends VuexModule.With({
         );
       const any = (arr: any[]) => reverse(Promise.all(arr.map(reverse)));
       // TODO : Migrate price feed to Newdex
-      const res1 = await any([fetchNewdexEosPriceOfTlos()]);
-      const res2 = await any([fetchCoinGechoUsdPriceOfEos()]);
+//      const res1 = await any([fetchNewdexEosPriceOfTlos()]);
+//      const res2 = await any([fetchCoinGechoUsdPriceOfEos()]);
 
-      // @ts-ignore
-      const p1 = res1.price != null ? res1.price as number : 0.0;
-      // @ts-ignore
-      const usd24hPriceMove = res1.percent_change_24h != null ? res1.percent_change_24h as number : 0.0;
-      // @ts-ignore
-      const p2 = res2 != null ? res2 as number : 0.0;
-      const usdPrice = p1 * p2;
-
-//      console.log("getUsdPrice",p1,p2,usdPrice);
-
-      // TODO : this syntax is really bad, not sure how to do it properly
-//      const res = await any([fetchCmcUsdPriceOfTlos()]);
-//      console.log("getUsdPrice.fetchCoinCmcUsdPriceOfTlos", res);
 //      // @ts-ignore
-//      const usdPrice = res.price != null ? res.price as number : 0.0;
+//      const p1 = res1.price != null ? res1.price as number : 0.0;
 //      // @ts-ignore
-//      const usd24hPriceMove = res.percent_change_24h != null ? res.percent_change_24h as number : 0.0;
-//      console.log("getUsdPrice.fetchCoinCmcUsdPriceOfTlos", usdPrice, usd24hPriceMove);
-      // TODO rolled back CMC price because of slow respones
-//      const res = await any([fetchCoinGechoUsdPriceOfTlos()]);
-//      const usdPrice = res as number;
-//      const usd24hPriceMove = 0.0;
+//      const usd24hPriceMove = res1.percent_change_24h != null ? res1.percent_change_24h as number : 0.0;
+//      // @ts-ignore
+//      const p2 = res2 != null ? res2 as number : 0.0;
+//      const usdPrice = p1 * p2;
+
+      const res = await any([fetchUsdPriceOfSeeds()]);
+      const usdPrice = res as number;
+
       this.setUsdPriceOfTlos({
         price: usdPrice,
         lastChecked: new Date().getTime()
       });
-      this.setUsdTlos24hPriceMove({
-        percent_change_24h: usd24hPriceMove,
-        lastChecked: new Date().getTime()
-      });
-      return usdPrice;
     } catch (e) {
       throw new Error(
         `Failed to find USD Price of TLOS from External API & Relay ${e.message}`

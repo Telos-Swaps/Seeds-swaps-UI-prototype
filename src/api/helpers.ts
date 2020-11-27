@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { vxm } from "@/store";
 import { JsonRpc } from "eosjs";
-import { Asset, number_to_asset, Sym } from "eos-common";
+import { Asset, asset_to_number, number_to_asset, Sym } from "eos-common";
 import { rpc } from "./rpc";
 import {
   BaseToken,
@@ -109,32 +109,35 @@ export const compareString = (stringOne: string, stringTwo: string) => {
   return stringOne.toLowerCase() == stringTwo.toLowerCase();
 };
 
+export const fetchUsdPriceOfSeeds = async (): Promise<number> => {
+  const res = await rpc.get_table_rows({
+    code: "tlosto.seeds",
+    table: "price",
+    scope: "tlosto.seeds"
+  });
+
+  if (res.rows.length == 0)
+    throw new Error(`Failed fetching USD price of SEEDS`);
+  const usdPriceOfSeedsString = res.rows[0].current_seeds_per_usd;
+  const usdPriceOfSeedsAsset = new Asset(usdPriceOfSeedsString);
+  const usdPriceOfSeeds = 1 / asset_to_number(usdPriceOfSeedsAsset);
+
+  console.log(
+    "fetchUsdPriceOfSeeds",
+    res,
+    usdPriceOfSeedsString,
+    usdPriceOfSeedsAsset,
+    usdPriceOfSeeds
+  );
+
+  return usdPriceOfSeeds;
+};
+
 export const fetchCoinGechoUsdPriceOfEos = async (): Promise<number> => {
   const res = await axios.get<{ eos: { usd: string } }>(
     "https://api.coingecko.com/api/v3/simple/price?ids=eos&vs_currencies=usd"
   );
   return Number(res.data.eos.usd);
-};
-
-export interface TlosCmcPriceData {
-  price: null | number;
-  percent_change_24h: null | number;
-}
-
-export interface TlosNewdexPriceData {
-  price: null | number;
-  percent_change_24h: null | number;
-}
-
-export const fetchNewdexEosPriceOfTlos = async (): Promise<TlosNewdexPriceData> => {
-  const res = await axios.get<any>(
-    "https://api.newdex.io/v1/ticker?symbol=eosio.token-tlos-eos"
-  );
-
-  const price = Number(res.data.data.last);
-  const percent_change_24h = Number(res.data.data.change);
-
-  return { price: price, percent_change_24h: percent_change_24h };
 };
 
 export const updateArray = <T>(
