@@ -2,50 +2,57 @@
   <b-container fluid>
     <b-row align-v="center" class="footer">
       <b-col cols="4">
-        <a :href="website" target="_blank" class="orange">Seeds Swaps</a
+        <a :href="website" target="_blank" class="orange">Seeds Swaps&nbsp;</a
         ><span class="text">© 2020</span>
       </b-col>
       <b-col cols="8" class="d-flex justify-content-end align-middle">
         <ul class="list-inline ">
           <li class="list-inline-item">
-            <router-link class="orange" :to="{ name: 'Privacy' }">
-              Privacy Policy
-            </router-link>
+            <a
+              href="https://www.joinseeds.com/seeds-terms-and-conditions.html"
+              target="_blank"
+              ><span class="text">Terms & Conditions</span></a
+            >
+          </li>
+          <li class="list-inline-item">
+            <a
+              href="https://www.joinseeds.com/seeds-privacy-policy.html"
+              target="_blank"
+              ><span class="text">Privacy Policy</span></a
+            >
           </li>
           <li class="list-inline-item">
             <span class="text">Version: {{ appVersion }} </span>
           </li>
           <li class="list-inline-item">
             <span class="text">
-
-              <a href="https://t.me/tswaps" target="_blank"
+              <a href="https://t.me/SEEDS_Community" target="_blank"
                 ><font-awesome-icon
                   :style="{ color: 'white' }"
                   :icon="['fab', 'telegram']"
                   fixed-width
               /></a>
 
-              <a href="https://twitter.com/tswaps_com" target="_blank"
+              <a href="https://www.facebook.com/joinseeds" target="_blank"
                 ><font-awesome-icon
                   :style="{ color: 'white' }"
-                  :icon="['fab', 'twitter']"
+                  :icon="['fab', 'facebook']"
                   fixed-width
               /></a>
 
-              <a href="https://github.com/Telos-Swaps" target="_blank"
+              <a href="https://medium.com/joinseeds" target="_blank"
                 ><font-awesome-icon
-                  :style="{ color: 'white' }"
-                  :icon="['fab', 'github']"
-                  fixed-width
-              /></a>
-
-              <a href="https://medium.com/@tswaps" target="_blank"
-              ><font-awesome-icon
                   :style="{ color: 'white' }"
                   :icon="['fab', 'medium']"
                   fixed-width
               /></a>
 
+              <a href="https://twitter.com/joinseeds" target="_blank"
+                ><font-awesome-icon
+                  :style="{ color: 'white' }"
+                  :icon="['fab', 'twitter']"
+                  fixed-width
+              /></a>
             </span>
           </li>
         </ul>
