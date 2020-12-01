@@ -39,7 +39,7 @@ interface RootParam {
 
 const moduleIds: { label: string; id: string }[] = [
   {
-    label: "Seeds Swaps",
+    label: "SEEDS Swaps",
     id: "tlos"
   }
 ];

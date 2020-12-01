@@ -1,3 +1,3 @@
 # Tokens
 
-Seeds swaps token registry.
+SEEDS Swaps token registry.

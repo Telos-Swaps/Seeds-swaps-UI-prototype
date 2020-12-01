@@ -2,7 +2,7 @@
   <b-container fluid>
     <b-row align-v="center" class="footer">
       <b-col cols="4">
-        <a :href="website" target="_blank" class="orange">Seeds Swaps&nbsp;</a
+        <a :href="website" target="_blank" class="orange">SEEDS Swaps&nbsp;</a
         ><span class="text">© 2020</span>
       </b-col>
       <b-col cols="8" class="d-flex justify-content-end align-middle">
