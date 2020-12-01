@@ -135,7 +135,6 @@ const appendBaseQuoteQuery = (base: string, quote: string, route: Route) => {
 };
 
 const addDefaultQueryParams = (to: Route): any => {
-//  console.log("addDefaultQueryParams::to : ", to);
   switch (to.params.service) {
     case "tlos":
       return appendBaseQuoteQuery(
@@ -332,7 +331,6 @@ export default class HeroConvert extends Vue {
     } else {
       await this.loadMoreTokens([id]);
       await wait(1);
-//      console.log("should be changing the token at", new Date().getTime());
       this.changeFromToken(id);
     }
   }
@@ -344,7 +342,6 @@ export default class HeroConvert extends Vue {
     } else {
       await this.loadMoreTokens([id]);
       await wait(1);
-//      console.log("should be changing the token at", new Date().getTime());
       this.changeToToken(id);
     }
   }
