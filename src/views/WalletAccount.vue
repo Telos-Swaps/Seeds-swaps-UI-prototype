@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div class="content content-boxed">
+    <div class="container-lg">
       <div class="block">
         <div class="block-header">
           <h3 class="block-title">Telos <small>Token Balances</small></h3>
         </div>
-        <div class="block-content">
+        <div class="block-content px-0 px-md-3 ">
+          <div class="table-responsive">
           <b-table
             id="tokens-tablee"
             striped
@@ -55,6 +56,7 @@
               </span>
             </template>
           </b-table>
+          </div>
         </div>
       </div>
     </div>
