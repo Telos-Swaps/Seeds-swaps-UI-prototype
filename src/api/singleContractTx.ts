@@ -12,7 +12,7 @@ export const liquidateAction = (
   name: "transfer",
   data: {
     from: userAccount,
-//    to: process.env.VUE_APP_NETWORKCONTRACT,
+    //    to: process.env.VUE_APP_NETWORKCONTRACT,
     to: "sx.seedsx",
     quantity: smartTokenAmount.to_string(),
     memo: composeMemo(
@@ -39,7 +39,7 @@ export const hydrateAction = (
   name: "transfer",
   data: {
     from: userAccount,
-//    to: process.env.VUE_APP_NETWORKCONTRACT,
+    //    to: process.env.VUE_APP_NETWORKCONTRACT,
     to: "sx.seedsx",
     quantity: tokenAmount.to_string(),
     memo: composeMemo(

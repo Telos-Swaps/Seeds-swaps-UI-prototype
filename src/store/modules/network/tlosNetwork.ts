@@ -25,7 +25,7 @@ import {
   Sym,
   symbol
 } from "eos-common";
-import {Chain} from "@/store/modules/wallet/tlosWallet";
+import { Chain } from "@/store/modules/wallet/tlosWallet";
 
 const requiredProps = ["balance", "contract", "symbol"];
 
@@ -113,7 +113,7 @@ export class TlosNetworkModule
   }
 
   @action async transfer({ to, amount, id, memo }: TransferParam) {
-//    console.log("telosNetwork.transfer", to, amount, id, memo);
+    //    console.log("telosNetwork.transfer", to, amount, id, memo);
     if (!this.isAuthenticated) throw new Error("Not authenticated!");
     const symbol = id;
     const dirtyReserve = vxm.tlosBancor.relaysList

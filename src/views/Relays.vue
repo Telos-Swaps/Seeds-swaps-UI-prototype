@@ -3,10 +3,7 @@
     <div class="container-lg">
       <div class="block">
         <div class="block-header">
-          <h3 class="block-title">
-            {{ $route.params.service.toUpperCase() }}
-            <small>Pools</small>
-          </h3>
+          <h3 class="block-title">Pools</h3>
           <div class="block-options">
             <b-form-input
               class="form-control form-control-alt"
@@ -79,8 +76,19 @@
               </template>
               <template v-slot:cell(apr)="data">
                 <span
-                  :class="data.item.apr == null ? '' : data.item.apr >= 0 ? `text-success font-w700` : 'text-danger font-w700'"
-                  >{{data.item.apr == null ? "N/A" : numeral(data.item.apr).format("0.00") + "%" }}</span>
+                  :class="
+                    data.item.apr == null
+                      ? ''
+                      : data.item.apr >= 0
+                      ? `text-success font-w700`
+                      : 'text-danger font-w700'
+                  "
+                  >{{
+                    data.item.apr == null
+                      ? "N/A"
+                      : numeral(data.item.apr).format("0.00") + "%"
+                  }}</span
+                >
               </template>
               <template v-slot:cell(actions)="data">
                 <div class="actionButtons">
@@ -175,8 +183,8 @@ export default class Relays extends Vue {
       sortable: true,
       label: "30d yield",
       class: "text-right"
-//      class: ["text-right", "font-w700"],
-//      formatter: (value: string) => numeral(value).format("0.0%")
+      //      class: ["text-right", "font-w700"],
+      //      formatter: (value: string) => numeral(value).format("0.0%")
     },
     {
       key: "liqDepth",
@@ -190,7 +198,8 @@ export default class Relays extends Vue {
       key: "fee",
       sortable: true,
       class: ["text-right", "font-w700"],
-      formatter: (value: string) => numeral(this.relayFee(parseFloat(value))).format("0.00%")
+      formatter: (value: string) =>
+        numeral(this.relayFee(parseFloat(value))).format("0.00%")
     },
     {
       key: "actions",
@@ -230,7 +239,7 @@ export default class Relays extends Vue {
       : ethAddress;
   }
 
-  relayFee(x: number){
+  relayFee(x: number) {
     return 1 - Math.pow(1 - x, 2);
   }
 
@@ -239,7 +248,9 @@ export default class Relays extends Vue {
   }
 
   get tokens() {
-    return vxm.bancor.relays.filter((relay: { smartEnabled: number; }) => relay.smartEnabled == 1);
+    return vxm.bancor.relays.filter(
+      (relay: { smartEnabled: number }) => relay.smartEnabled == 1
+    );
   }
 
   focusRelay(symbolCode: string) {

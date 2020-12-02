@@ -3,7 +3,7 @@
     <div class="container-lg">
       <div class="block">
         <div class="block-header">
-          <h3 class="block-title">Telos <small>Token Balances</small></h3>
+          <h3 class="block-title">Token Balances</h3>
         </div>
         <div class="block-content px-0 px-md-3 ">
           <div class="table-responsive">

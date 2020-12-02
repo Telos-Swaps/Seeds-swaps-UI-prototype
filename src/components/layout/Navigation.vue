@@ -2,7 +2,11 @@
   <b-navbar class="navBar" toggleable="md" type="dark" variant="dark">
     <b-navbar-brand>
       <router-link :to="{ name: 'Tokens' }">
-        <img src="@/assets/media/logos/telos.png" height="30px" class="mr-4" />
+        <img
+          src="@/assets/media/logos/SEEDS-logo.svg"
+          height="30px"
+          class="mr-4"
+        />
       </router-link>
     </b-navbar-brand>
 
@@ -56,11 +60,17 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from "vue-property-decorator";
-import {vxm} from "@/store/";
-import {buildTokenId, compareString, Feature, findOrThrow, services} from "@/api/helpers";
-import {ModuleParam} from "../../types/bancor";
-import {Route} from "vue-router";
+import { Component, Vue, Watch } from "vue-property-decorator";
+import { vxm } from "@/store/";
+import {
+  buildTokenId,
+  compareString,
+  Feature,
+  findOrThrow,
+  services
+} from "@/api/helpers";
+import { ModuleParam } from "../../types/bancor";
+import { Route } from "vue-router";
 
 const defaultPaths = [
   {
@@ -181,7 +191,7 @@ export default class Navigation extends Vue {
     await vxm.bancor.initialiseModule({
       moduleId,
       resolveWhenFinished: !moduleAlreadyLoaded,
-//      params: defaultModuleParams(moduleId)
+      //      params: defaultModuleParams(moduleId)
       params: moduleId === "xchain" ? {} : defaultModuleParams(moduleId)
     });
 
@@ -200,7 +210,7 @@ export default class Navigation extends Vue {
   }
   created() {
     false;
-//    vxm.ethWallet.checkAlreadySignedIn();
+    //    vxm.ethWallet.checkAlreadySignedIn();
   }
   @Watch("isAuthenticated")
   onAuthentication(account: string) {
@@ -224,14 +234,14 @@ export default class Navigation extends Vue {
     return false;
   }
   get loginButtonLabel() {
-//    if (this.selectedWallet == "tlos") {
-      return this.loginStatus[0];
-//    }
+    //    if (this.selectedWallet == "tlos") {
+    return this.loginStatus[0];
+    //    }
   }
   get icon() {
-//    if (this.selectedWallet == "tlos") {
-      return this.loginStatus[1];
-//    }
+    //    if (this.selectedWallet == "tlos") {
+    return this.loginStatus[1];
+    //    }
   }
   get spin() {
     return this.loginStatus[2];

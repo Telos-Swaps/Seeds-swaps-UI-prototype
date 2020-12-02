@@ -185,9 +185,9 @@ export default class HeroRelay extends Vue {
     const baseMenus = [
       ["removeLiquidity", "Remove Liquidity", "arrow-down", "danger"],
       ["addLiquidity", "Add Liquidity", "arrow-up"]
-//      ["setFee", "Set Fee", "dollar-sign"],
-//      ["changeOwner", "Change Owner", "handshake", "info"],
-//      ["deleteRelay", "Delete Pool", "trash-alt", "warning"]
+      //      ["setFee", "Set Fee", "dollar-sign"],
+      //      ["changeOwner", "Change Owner", "handshake", "info"],
+      //      ["deleteRelay", "Delete Pool", "trash-alt", "warning"]
     ];
 
     if (!this.supportedFeatures) return [baseMenus[1]];
@@ -427,7 +427,7 @@ export default class HeroRelay extends Vue {
   }
 
   get defaultFocusedId() {
-//    console.log("defaultFocusedId : ", this.relays);
+    //    console.log("defaultFocusedId : ", this.relays);
     return this.relays.find(
       relay => relay.addLiquiditySupported && relay.removeLiquiditySupported
     )!.id;

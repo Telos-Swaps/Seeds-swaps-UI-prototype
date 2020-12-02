@@ -9,7 +9,7 @@
               <h2>SEEDS Swaps</h2>
               <p>
                 At SEEDS Swaps, accessible from
-                <a :href="website" class="orange" target="_blank">tswaps.com</a
+                <a :href="website" class="orange" target="_blank">telosd.com</a
                 >, one of our main priorities is the privacy of our visitors.
                 This Privacy Policy document contains types of information that
                 is collected and recorded by SEEDS Swaps and how we use it.
@@ -165,11 +165,11 @@ import { Prop, Component, Vue } from "vue-property-decorator";
 @Component({})
 export default class Privacy extends Vue {
   get website() {
-    return "https://tswaps.com";
+    return "https://telosd.com";
   }
 
   get email() {
-    return "info@tswaps.com";
+    return "info@telosd.com";
   }
 }
 </script>

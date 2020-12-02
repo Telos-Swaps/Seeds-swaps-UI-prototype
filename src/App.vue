@@ -70,9 +70,9 @@ export default class App extends Vue {
   error = false;
 
   async loadBancor() {
-//    console.log("feature:", this.$route.meta.feature);
-//    console.log("service:", this.$route.params.service);
-//    console.log("query:", this.$route.query);
+    //    console.log("feature:", this.$route.meta.feature);
+    //    console.log("service:", this.$route.params.service);
+    //    console.log("query:", this.$route.query);
 
     const trade = this.$route.meta.feature == "Trade";
 
@@ -91,7 +91,7 @@ export default class App extends Vue {
       })
     };
 
-//    console.log({ service, feature, query, initParams, paramsSatisfied });
+    //    console.log({ service, feature, query, initParams, paramsSatisfied });
     try {
       await vxm.bancor.init(initParams);
       this.loading = false;
@@ -133,7 +133,7 @@ h2 {
 }
 
 #loading {
-  background-color: #02003b;
+  background-color: #214933;
   height: 100%;
   padding-top: 95px;
 }

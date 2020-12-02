@@ -171,7 +171,7 @@ export interface ViewToken {
   symbol: string;
   name: string;
   price?: number;
-//  priceTlos?: number;
+  //  priceTlos?: number;
   liqDepth?: number;
   logo: string;
   change24h?: number;
@@ -202,7 +202,7 @@ export interface ViewRelay {
   reserves: ViewReserve[];
   fee: number;
   owner: string;
-  apr: number;     // TODO populate APR
+  apr: number; // TODO populate APR
   addLiquiditySupported: boolean;
   removeLiquiditySupported: boolean;
   focusAvailable?: boolean;
@@ -227,7 +227,7 @@ export type PoolQuery = string;
 export interface ModuleParam {
   tradeQuery?: TradeQuery;
   poolQuery?: PoolQuery;
-//  bridgeQuery?: BridgeQuery;
+  //  bridgeQuery?: BridgeQuery;
 }
 
 export interface ViewModalToken {
@@ -415,7 +415,7 @@ export interface BancorAPIResponseToken {
   liquidityDepth: number;
   decimals: number;
   price: number;
-//  priceTlos: number;
+  //  priceTlos: number;
   change24h: number;
   volume24h: Volume24H;
   priceHistory: Array<number[]>;

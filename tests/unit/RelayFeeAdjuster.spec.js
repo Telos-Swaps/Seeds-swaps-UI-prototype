@@ -36,13 +36,15 @@ describe("Relay Fee Adjuster", () => {
     const $decrement = wrapper.find('[aria-label="Decrement"]');
     const emitted = wrapper.emitted();
 
-    const lastEmitted = emitted["update:fee"][emitted["update:fee"].length - 1][0];
+    const lastEmitted =
+      emitted["update:fee"][emitted["update:fee"].length - 1][0];
 
     await $decrement.trigger("touchstart");
     await $decrement.trigger("touchend");
 
     const newEmits = wrapper.emitted();
-    const newLastEmitted = newEmits["update:fee"][emitted["update:fee"].length - 1][0];
+    const newLastEmitted =
+      newEmits["update:fee"][emitted["update:fee"].length - 1][0];
 
     expect(newLastEmitted).not.toBe(lastEmitted);
     expect(newLastEmitted).toBeCloseTo(lastEmitted - 0.1);

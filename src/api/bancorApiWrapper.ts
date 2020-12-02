@@ -42,7 +42,9 @@ export interface ConvertPayload {
   ownerAddress: string;
 }
 
-enum Blockchain {TLOS}
+enum Blockchain {
+  TLOS
+}
 
 export class BancorApi implements BancorWrapper {
   instance: AxiosInstance;
@@ -126,7 +128,7 @@ export class BancorApi implements BancorWrapper {
     }));
   }
 
-/*
+  /*
   public async getTokens(): Promise<any> {
     let params = {
       limit: 150,

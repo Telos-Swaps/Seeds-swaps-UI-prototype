@@ -38,11 +38,9 @@
   z-index: 99;
 }
 
-
-
 //New style changes - Neil
 .bg-dark {
-  background-color: #02003b !important;
+  background-color: #214933 !important;
 }
 
 .navBar {
@@ -52,21 +50,21 @@
 }
 
 .footer {
-  background-color: #02003b;
+  background-color: #e8edd7;
 }
 
 .bg-primary {
-  background-color: #02003b !important;
+  background-color: #e8edd7 !important;
 }
 
 .bg-primary-dark-op {
-  background-color: rgba(2, 0, 56, 0.85) !important;
+  background-color: rgba(33, 73, 51, 0.70) !important;
 }
 
 .btn-dual {
-  color: white;
-  background-color: #571aff;
-  border-color: #571aff;
+  color: #214933;
+  background-color: #e8edd7;
+  border-color: #e8edd7;
 }
 
 .btn-dual:hover {
@@ -77,8 +75,8 @@
 
 .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
   color: #231f20;
-  background-color: #dfdfed;
-  border-color: #dfdfed;
+  background-color: #e8edd7;
+  border-color: #e8edd7;
 }
 
 .btn-success.disabled {
@@ -100,13 +98,13 @@
 }
 
 label.active {
-  color: #231f20;
-  background-color: #ffd75e !important;
+  color: #214933 !important;
+  background-color: #214933 !important;
 }
 
 label.active:hover {
-  color: #231f20;
-  background-color: #eac24a !important;
+  color: #214933 !important;
+  background-color: #214933 !important;
 }
 
 .img-avatar-thumb {

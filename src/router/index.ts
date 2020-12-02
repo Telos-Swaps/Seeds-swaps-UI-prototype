@@ -12,7 +12,7 @@ import HeroRelay from "@/components/hero/sub/HeroRelay.vue";
 import HeroCreate from "@/components/hero/sub/HeroCreate.vue";
 import Navigation from "@/components/layout/Navigation.vue";
 import Privacy from "@/components/common/Privacy.vue";
-import {Feature, services} from "@/api/helpers";
+import { Feature, services } from "@/api/helpers";
 
 Vue.use(Router);
 

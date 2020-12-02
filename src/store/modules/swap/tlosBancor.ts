@@ -136,7 +136,7 @@ const compareEosTokenSymbol = (
 const reservesIncludeTokenMetaDry = (tokenMeta: TokenMeta[]) => (
   relay: DryRelay
 ) => {
-  console.log("reservesIncludeTokenMetaDry",relay.reserves,tokenMeta);
+  console.log("reservesIncludeTokenMetaDry", relay.reserves, tokenMeta);
   const status = relay.reserves.every(reserve =>
     tokenMeta.some(
       meta =>
@@ -255,7 +255,7 @@ export interface ViewTokenMinusLogo {
   symbol: string;
   name: string;
   price: number;
-//  priceTlos: number;
+  //  priceTlos: number;
   liqDepth: number;
   change24h: number;
   volume24h: number;
@@ -377,7 +377,7 @@ const buildTwoFeedsFromRelay = (
     )!;
     return {
       costByNetworkUsd: price.unitPrice,
-//      costByNetworkTlos: price.unitPrice,
+      //      costByNetworkTlos: price.unitPrice,
       liqDepth: calculateLiquidtyDepth(relay, knownPrices),
       smartTokenId: buildTokenId({
         contract: relay.smartToken.contract,
@@ -418,7 +418,14 @@ const tokenStrategies: Array<(one: string, two: string) => string> = [
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 1)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 2)),
   (one, two) => chopSecondSymbol(one, chopSecondLastChar(two, 3)),
-  (one, two) => chopSecondSymbol(one, two.split("").reverse().join(""))
+  (one, two) =>
+    chopSecondSymbol(
+      one,
+      two
+        .split("")
+        .reverse()
+        .join("")
+    )
 ];
 
 const generateSmartTokenSymbol = async (
@@ -525,7 +532,10 @@ export class TlosBancorModule
       const relay = this.relaysList.find(relay => compareString(relay.id, id))!;
       const features: Feature[] = [
         ["addLiquidity", () => true],
-        ["removeLiquidity", relay => relay.reserves.some(reserve => reserve.amount > 0)]
+        [
+          "removeLiquidity",
+          relay => relay.reserves.some(reserve => reserve.amount > 0)
+        ]
       ];
       return features
         .filter(([name, test]) => test(relay, isAuthenticated))
@@ -1145,8 +1155,8 @@ export class TlosBancorModule
       ]);
       this.setTokenMeta(tokenMeta);
       this.setTlosPrice(usdPriceOfSeeds);
-//      this.setTlos24hPriceMove(-4.44);
-      this.setTlos24hPriceMove(0.00);
+      //      this.setTlos24hPriceMove(-4.44);
+      this.setTlos24hPriceMove(0.0);
 
       const v1Relays = getHardCodedRelays();
 
@@ -1353,7 +1363,8 @@ export class TlosBancorModule
           const feed = this.relayFeed.find(feed =>
             compareString(feed.smartTokenId, smartTokenId)
           );
-          const apr: number = (feed && feed.smartPriceApr) ? feed.smartPriceApr : 0.0;
+          const apr: number =
+            feed && feed.smartPriceApr ? feed.smartPriceApr : 0.0;
 
           return {
             id: smartTokenId,

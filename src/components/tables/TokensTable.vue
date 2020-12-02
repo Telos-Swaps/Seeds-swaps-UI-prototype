@@ -1,9 +1,7 @@
 <template>
   <div class="block">
     <div class="block-header">
-      <h3 class="block-title">
-        All Tokens <small> - {{ name }}</small>
-      </h3>
+      <h3 class="block-title">All Tokens</h3>
       <div class="block-options">
         <b-form-input
           class="form-control form-control-alt"
@@ -41,21 +39,42 @@
           </template>
           <template v-slot:cell(change24h)="data">
             <span
-              :class="data.item.change24h == null ? '' : data.item.change24h >= 0 ? `text-success font-w700` : 'text-danger font-w700'"
-              >{{data.item.change24h == null ? "N/A" : numeral(data.item.change24h).format("0.00") + "%"}}</span>
+              :class="
+                data.item.change24h == null
+                  ? ''
+                  : data.item.change24h >= 0
+                  ? `text-success font-w700`
+                  : 'text-danger font-w700'
+              "
+              >{{
+                data.item.change24h == null
+                  ? "N/A"
+                  : numeral(data.item.change24h).format("0.00") + "%"
+              }}</span
+            >
           </template>
           <template v-slot:cell(price)="data">
             <span class="text-center font-w700">
-              <span v-if="data.item.price < 0.01">{{numeral(data.item.price).format("$0,0.000000")}}</span>
-              <span v-else-if="data.item.price < 1">{{numeral(data.item.price).format("$0,0.0000")}}</span>
-              <span v-else-if="data.item.price < 100">{{numeral(data.item.price).format("$0,0.00")}}</span>
-              <span v-else>{{numeral(data.item.price).format("$0,0")}}</span>
+              <span v-if="data.item.price < 0.01">{{
+                numeral(data.item.price).format("$0,0.000000")
+              }}</span>
+              <span v-else-if="data.item.price < 1">{{
+                numeral(data.item.price).format("$0,0.0000")
+              }}</span>
+              <span v-else-if="data.item.price < 100">{{
+                numeral(data.item.price).format("$0,0.00")
+              }}</span>
+              <span v-else>{{ numeral(data.item.price).format("$0,0") }}</span>
             </span>
           </template>
           <template v-slot:cell(liqDepth)="data">
             <span class="text-right">
-              <span v-if="data.item.liqDepth < 100">{{numeral(data.item.liqDepth).format("$0,0.00")}}</span>
-              <span v-else>{{numeral(data.item.liqDepth).format("$0,0")}}</span>
+              <span v-if="data.item.liqDepth < 100">{{
+                numeral(data.item.liqDepth).format("$0,0.00")
+              }}</span>
+              <span v-else>{{
+                numeral(data.item.liqDepth).format("$0,0")
+              }}</span>
             </span>
           </template>
           <template v-slot:cell(actions)="data">
@@ -87,10 +106,7 @@
 import { Watch, Component, Vue, Prop } from "vue-property-decorator";
 import numeral from "numeral";
 import SortIcons from "@/components/common/SortIcons.vue";
-import {
-  SimpleToken,
-  SimpleTokenWithMarketData
-} from "@/types/bancor";
+import { SimpleToken, SimpleTokenWithMarketData } from "@/types/bancor";
 const {
   ContentLoader,
   FacebookLoader,
@@ -113,7 +129,6 @@ import Velocity from "velocity-animate";
     SortIcons
   }
 })
-
 export default class TokensTable extends Vue {
   @Prop(Boolean) loading?: boolean;
   @Prop(Boolean) scrollToTop?: boolean;
@@ -177,7 +192,7 @@ export default class TokensTable extends Vue {
       key: "price",
       sortable: true,
       label: "Price USD",
-      class: ["text-right"],
+      class: ["text-right"]
     },
     {
       key: "volume24h",
@@ -268,11 +283,21 @@ table#tokens-table .flip-list-move {
 }
 
 @keyframes fa-blink {
-  0% {opacity: 1;}
-  25% {opacity: 0.25;}
-  50% {opacity: 0.5;}
-  75% {opacity: 0.75;}
-  100% {opacity: 0;}
+  0% {
+    opacity: 1;
+  }
+  25% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  75% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 .fa-blink {
   -webkit-animation: fa-blink 0.55s linear infinite;

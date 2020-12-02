@@ -38,7 +38,7 @@ class TokenApi {
   /**
    * Get dymmy Tokens
    */
-/*
+  /*
   getTokensDummy(): Promise<TokenInfo[]> {
     const delayInMilliseconds = 1; //1 second
 
@@ -53,7 +53,7 @@ class TokenApi {
   /**
    * Get Table Dummy
    */
-/*
+  /*
   getTableDummy(): any {
     const delayInMilliseconds = 1; //1 second
 

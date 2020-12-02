@@ -65,11 +65,11 @@ import { vxm } from "@/store/";
 import { WalletProvider } from "eos-transit";
 
 const mobileCompatibleWallets = [
-//  "EOS Lynx",
-//  "TokenPocket",
-//  "meetone_provider",
-//  "whalevault",
-//  "Keycat",
+  //  "EOS Lynx",
+  //  "TokenPocket",
+  //  "meetone_provider",
+  //  "whalevault",
+  //  "Keycat",
   "anchor-link",
   "scatter"
 ];
@@ -114,33 +114,33 @@ export default class ModalLogin extends Vue {
       this.$bvModal.hide("modal-login");
     } catch (e) {
       this.error = e;
-//      console.log(e);
+      //      console.log(e);
     } finally {
       this.loading = false;
     }
   }
 
   providerLogoUrl(p: WalletProvider) {
-//    console.log("providerLogoUrl",p.id);
+    //    console.log("providerLogoUrl",p.id);
     switch (p.id) {
       case "anchor-link":
         return "anchor-logo-blue.svg";
       case "scatter":
         return "scatter.svg";
-//      case "Sqrl":
-//        return "SQRL.svg";
+      //      case "Sqrl":
+      //        return "SQRL.svg";
       case "ledger":
         return "ledger.png";
-//      case "meetone_provider":
-//        return "meetone.jpg";
-//      case "Keycat":
-//        return "keycat.svg";
-//      case "TokenPocket":
-//        return "tp.jpg";
-//      case "EOS Lynx":
-//        return "lynx.jpg";
-//      case "whalevault":
-//        return "whalevault.png";
+      //      case "meetone_provider":
+      //        return "meetone.jpg";
+      //      case "Keycat":
+      //        return "keycat.svg";
+      //      case "TokenPocket":
+      //        return "tp.jpg";
+      //      case "EOS Lynx":
+      //        return "lynx.jpg";
+      //      case "whalevault":
+      //        return "whalevault.png";
       default:
         return "eos.png";
     }
