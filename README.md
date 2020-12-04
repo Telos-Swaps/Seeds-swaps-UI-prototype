@@ -30,3 +30,17 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Change node version
+```
+brew search node
+brew install node@14
+brew unlink node
+brew link node@14
+#or
+brew link --force --overwrite node@14
+```
+### Resolve binding error on node-sass
+```
+npm rebuild node-sass
+```
