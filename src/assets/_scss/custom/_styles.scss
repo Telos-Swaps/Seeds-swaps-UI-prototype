@@ -129,3 +129,135 @@ label.active:hover {
 a:hover {
   color: #ff422a;
 }
+
+
+//New style changes - Luigi
+
+.form-control.form-control-alt {
+  border-radius:40px;
+  padding: 10px 22px;
+  height: auto;
+  background-color: #f2f5ec;
+}
+
+button.btn-secondary {
+  background-color: #2ff141;
+  color: #2b4835;
+  border-color: #2ff141;
+  margin-bottom:12px;
+}
+
+button.btn-secondary:hover,
+button.btn-secondary:active,
+button.btn-secondary:focus {
+  color: #2ff141;
+  background-color: #214933;
+  border-color: #2ff141;
+}
+
+button.btn-success,
+button.btn-success:focus {
+  background-color: #2ff141;
+  color: #2b4835;
+  border:none;
+}
+
+button.btn-success.disabled {
+  background-color: #2a932f;
+  color: #2b4835;
+  border:none;
+}
+
+main div.bg-image .bg-primary-dark-op {
+  padding-bottom: 100px;
+  padding-top:60px;
+}
+
+
+
+nav.navbar.navBar {
+  position:absolute;
+  width:100%;
+  z-index:100;
+  background:transparent!important;
+  box-shadow: none;
+}
+
+div.networks .btn.btn-branded.btn-sm {
+  display:none;
+}
+
+ul.login button {
+
+
+  background-color: #2ff141;
+  color: #214933;
+  border-color: #2ff141;
+  padding: 6px 12px;
+}
+
+ul.login button:hover,
+ul.login button:focus {
+  color: #2ff141;
+  background-color: #214933;
+  border-color: #2ff141;
+}
+
+a.btn.mr-1.btn-primary.btn-sm {
+  background-color:transparent;
+  border:none;
+  margin:0px 12px;
+}
+
+a.btn.mr-1.btn-primary.btn-sm:hover {
+  color: #2ff141;
+}
+
+a.btn.active.mr-1.btn-primary.btn-sm {
+  background-color: #f2f5ec;
+  padding: 6px 12px;
+}
+
+a.btn.active.mr-1.btn-primary.btn-sm:hover {
+  background-color:#2ff141;
+  color: #214933;
+}
+
+div.container-xl .block {
+  box-shadow: 0px 0px 20px rgba(0,0,0,0.08);
+  margin-top:-80px;
+  background-color: #f2f5ec;
+}
+
+div.container-xl .form-control.form-control-alt {
+  background-color:#fff;
+}
+
+div.container-xl .block-header {
+  padding: 22px 22px 4px 22px;
+}
+
+td.text-right button.btn-success {
+  border-radius:100%;
+  border:none;
+}
+
+td.text-right button.btn-success:hover {
+  background-color:#2ff141;
+}
+
+td.text-right button.btn-info {
+  border-radius:100%;
+  background-color: #214933;
+  color: #2ff141;
+  border:none;
+}
+
+td.text-right button.btn-info:hover {
+  color:#fff;
+}
+
+.footer {
+    background-color: #e8edd7;
+    padding-top: 100px;
+}
