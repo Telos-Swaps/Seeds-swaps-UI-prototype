@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="container-lg">
+    <div class="container-xl">
       <div class="block">
         <div class="block-header">
           <h3 class="block-title">Pools</h3>

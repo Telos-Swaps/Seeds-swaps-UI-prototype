@@ -292,7 +292,7 @@ export default class Navigation extends Vue {
   background-color: #fa932b !important;
 }
 .login {
-  min-width: 130px;
+  min-width: 150px;
 }
 @media (max-width: 768px) {
   .networks {

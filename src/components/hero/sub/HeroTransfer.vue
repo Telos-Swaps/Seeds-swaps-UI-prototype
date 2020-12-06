@@ -1,6 +1,6 @@
 <template>
   <hero-wrapper>
-    <div class="container-lg">
+    <div class="container-xl">
       <b-row>
         <b-col md="4" class="text-center">
           <token-amount-input
