@@ -402,22 +402,25 @@ export const getTokenMeta = async (): Promise<TokenMeta[]> => {
 
 export const fetchTradeData = async (): Promise<TokenPrice[]> => {
   const rawTradeData = await telosRpc.get_table_rows({
-    code: "data.seedsx",
+    code: "data.tbn",
     table: "tradedata",
-    scope: "data.seedsx",
+    scope: "data.tbn",
     limit: 100
   });
 
+//  console.log("fetchTradeData:1");
   const dataExists = rawTradeData.rows.length > 0;
   if (!dataExists) throw new Error("Trade data not found");
 
   const parsedTradeData = rawTradeData.rows;
 
+//  console.log("fetchTradeData:2");
   let usdPriceOfSeeds = await vxm.bancor.fetchusdPriceOfSeeds();
   // TODO read usdTlos24hPriceMove from CMC, use as follows
   // hardcoded for now
   //  let usdTlos24hPriceMove = -4.44 / 100.0;
   // let usdTlos24hPriceMove = 0.0 / 100.0;
+//  console.log("fetchTradeData:3");
   let usdTlos24hPriceMove = await vxm.bancor.fetchUsd24hPriceMove();
 
   let newTlosObj: any = {};
@@ -437,60 +440,75 @@ export const fetchTradeData = async (): Promise<TokenPrice[]> => {
 
   let newArr: any = [];
   let i = 2;
+//  console.log("fetchTradeData:4");
   parsedTradeData.forEach(function(itemObject: any) {
+//try {
     let newObj: any = {};
     newObj.id = i;
-    newObj.code = itemObject.liquidity_depth.find(
+//    console.log("fetchTradeData:5",newObj.id,newObj);
+    let tokenCode = itemObject.liquidity_depth.find(
       (token: any) => !compareString(token.key, "SEEDS")
     ).key;
-    newObj.name = newObj.code;
+
+//    console.log("fetchTradeData:6",tokenCode,itemObject.liquidity_depth);
+    newObj.code = tokenCode;
+    newObj.name = tokenCode;
     newObj.primaryCommunityImageName = newObj.code;
-    newObj.liquidityDepth =
-      itemObject.liquidity_depth
+
+    // Skip rows which don't include SEEDS
+    if (itemObject.liquidity_depth.find((token: any) => compareString(token.key, "SEEDS"))) {
+      console.log("add >>>",itemObject);
+
+      newObj.liquidityDepth =
+        itemObject.liquidity_depth
+          .find((token: any) => compareString(token.key, "SEEDS"))
+          .value.split(" ")[0] *
+        usdPriceOfSeeds *
+        2.0;
+      newObj.price =
+        itemObject.price.find((token: any) => compareString(token.key, "SEEDS"))
+          .value * usdPriceOfSeeds;
+
+      // This is to convert from % change in TLOS to USD
+      let raw24hChange =
+        itemObject.price_change_24h.find((token: any) =>
+          compareString(token.key, "SEEDS")
+        ).value * usdPriceOfSeeds;
+      let a = 1.0 / (1.0 + usdTlos24hPriceMove);
+      newObj.change24h =
+        100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
+
+      let volume24h: any = {};
+      volume24h.USD =
+        itemObject.volume_24h
+          .find((token: any) => compareString(token.key, "SEEDS"))
+          .value.split(" ")[0] * usdPriceOfSeeds;
+      newObj.volume24h = volume24h;
+
+      // TODO smart token APR needs to be incuded in "pools" tab, calculations follow, APR in TLOS
+      let smartPrice = itemObject.smart_price
         .find((token: any) => compareString(token.key, "SEEDS"))
-        .value.split(" ")[0] *
-      usdPriceOfSeeds *
-      2.0;
-    newObj.price =
-      itemObject.price.find((token: any) => compareString(token.key, "SEEDS"))
-        .value * usdPriceOfSeeds;
-
-    // This is to convert from % change in TLOS to USD
-    let raw24hChange =
-      itemObject.price_change_24h.find((token: any) =>
-        compareString(token.key, "SEEDS")
-      ).value * usdPriceOfSeeds;
-    let a = 1.0 / (1.0 + usdTlos24hPriceMove);
-    newObj.change24h =
-      100.0 * (newObj.price / (a * (newObj.price - raw24hChange)) - 1.0);
-
-    let volume24h: any = {};
-    volume24h.USD =
-      itemObject.volume_24h
+        .value.split(" ")[0];
+      let smartPriceApr = itemObject.smart_price_change_30d
         .find((token: any) => compareString(token.key, "SEEDS"))
-        .value.split(" ")[0] * usdPriceOfSeeds;
-    newObj.volume24h = volume24h;
+        .value.split(" ")[0];
+      smartPriceApr = (smartPriceApr / (smartPrice - smartPriceApr)) * 100; // * 12;
 
-    // TODO smart token APR needs to be incuded in "pools" tab, calculations follow, APR in TLOS
-    let smartPrice = itemObject.smart_price
-      .find((token: any) => compareString(token.key, "SEEDS"))
-      .value.split(" ")[0];
-    let smartPriceApr = itemObject.smart_price_change_30d
-      .find((token: any) => compareString(token.key, "SEEDS"))
-      .value.split(" ")[0];
-    smartPriceApr = (smartPriceApr / (smartPrice - smartPriceApr)) * 100; // * 12;
+      newObj.smartPrice = smartPrice;
+      newObj.smartPriceApr = smartPriceApr;
 
-    newObj.smartPrice = smartPrice;
-    newObj.smartPriceApr = smartPriceApr;
+      // TODO need to add USD price changes into trade data from Delphi Oracle
+      // prices will then be where symbol = USD, not TLOS
 
-    // TODO need to add USD price changes into trade data from Delphi Oracle
-    // prices will then be where symbol = USD, not TLOS
+      newTlosObj.liquidityDepth += newObj.liquidityDepth;
+      newTlosObj.volume24h.USD += newObj.volume24h.USD;
 
-    newTlosObj.liquidityDepth += newObj.liquidityDepth;
-    newTlosObj.volume24h.USD += newObj.volume24h.USD;
-
+      newArr.push(newObj);
+    }
+//} catch (e) {
+//  console.error(e);
+//}
     i++;
-    newArr.push(newObj);
   });
   newArr.push(newTlosObj);
 

@@ -1231,12 +1231,15 @@ export class TlosBancorModule
   }) {
     try {
       // Pull token prices from chain
+//      console.log("buildPossibleRelayFeedsFromBancorApi:1");
       const [tokenPrices] = await Promise.all([fetchTradeData()]);
 
+//      console.log("buildPossibleRelayFeedsFromBancorApi:2");
       const tlosToken = findOrThrow(tokenPrices, token =>
         compareString(token.code, "SEEDS")
       );
 
+//      console.log("buildPossibleRelayFeedsFromBancorApi:3");
       const relayFeeds: RelayFeed[] = relays.flatMap(relay => {
         const [
           secondaryReserve,
@@ -1245,6 +1248,7 @@ export class TlosBancorModule
           reserve.symbol.code().to_string()
         );
 
+        console.log("buildPossibleRelayFeedsFromBancorApi:4",tokenPrices,relays);
         const token = findOrThrow(
           tokenPrices,
           price =>
@@ -1252,6 +1256,7 @@ export class TlosBancorModule
           "failed to find token in possible relayfeeds from bancor API"
         );
 
+        console.log("buildPossibleRelayFeedsFromBancorApi:5");
         const includeTLOS = compareString(
           secondaryReserve.symbol.code().to_string(),
           "SEEDS"
@@ -1261,6 +1266,7 @@ export class TlosBancorModule
         // should use USD price of TLOS
         const liqDepth = token.liquidityDepth;
 
+//        console.log("buildPossibleRelayFeedsFromBancorApi:6");
         const secondary = {
           tokenId: buildTokenId({
             contract: secondaryReserve.contract,
@@ -1272,6 +1278,7 @@ export class TlosBancorModule
           })
         };
 
+//        console.log("buildPossibleRelayFeedsFromBancorApi:7");
         return [
           {
             change24H: token.change24h,

@@ -8,9 +8,9 @@ const seedsToken = {
 
 const oldRelays = [
   {
-    contract: "hypha.seedsx",
+    contract: "hyphax.seeds",
     smartToken: {
-      contract: "relay.seedsx",
+      contract: "relayx.seeds",
       symbol: "8,HYPHAR"
     },
     reserves: [
@@ -22,9 +22,9 @@ const oldRelays = [
     ]
   },
   {
-    contract: "husd.seedsx",
+    contract: "husdx.seeds",
     smartToken: {
-      contract: "relay.seedsx",
+      contract: "relayx.seeds",
       symbol: "8,HUSDR"
     },
     reserves: [
@@ -36,10 +36,10 @@ const oldRelays = [
     ]
   },
   {
-    contract: "tlos.seedsx",
+    contract: "seeds.tbn",
     smartToken: {
-      contract: "relay.seedsx",
-      symbol: "8,TLOSR"
+      contract: "seedsrly.tbn",
+      symbol: "8,TLSEEDS"
     },
     reserves: [
       {

@@ -36,13 +36,13 @@ export enum Chain {
 const telos_chain_options = {
   appName: "TLOSD.Telos",
   network: {
-    //    host: "api.telos.africa",
-    //    host: "telos.caleos.io",
-    host: "testnet.telos.africa",
+    host: "api.telos.africa",
+    // host: "telos.caleos.io",
+    // host: "testnet.telos.africa",
     port: 443,
     protocol: "https",
-    //    chainId: "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
-    chainId: "1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"
+    chainId: "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
+    // chainId: "1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"
   },
   walletProviders: [anchor("TLOSD.Telos"), scatter(), ledger()]
 };
