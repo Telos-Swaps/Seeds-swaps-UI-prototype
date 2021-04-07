@@ -112,6 +112,12 @@ export class TlosNetworkModule
     });
   }
 
+  @action async redeem() {
+    if (!this.isAuthenticated) throw new Error("Not authenticated!");
+
+    await multiContract.tokenRedeem();
+  }
+
   @action async transfer({ to, amount, id, memo }: TransferParam) {
     //    console.log("telosNetwork.transfer", to, amount, id, memo);
     if (!this.isAuthenticated) throw new Error("Not authenticated!");

@@ -176,7 +176,15 @@ export default class Navigation extends Vue {
               render: true
             }
           : []
-      ]
+      ],
+      {
+        label: "Redeem HUSD",
+        destination: createDirectRoute("Redeem"),
+        render: true,
+        disabled: false,
+        icon: "redeem-husd",
+        active: this.$route.name == "Redeem"
+      }
       // @ts-ignore
     ].filter(route => route.render);
   }

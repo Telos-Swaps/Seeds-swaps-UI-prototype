@@ -34,7 +34,7 @@ export enum Chain {
 }
 
 const telos_chain_options = {
-  appName: "TLOSD.Telos",
+  appName: "Swaps.Seeds",
   network: {
     host: "api.telos.africa",
     // host: "telos.caleos.io",
@@ -44,7 +44,7 @@ const telos_chain_options = {
     chainId: "4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"
     // chainId: "1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"
   },
-  walletProviders: [anchor("TLOSD.Telos"), scatter(), ledger()]
+  walletProviders: [anchor("Swaps.Seeds"), scatter(), ledger()]
 };
 
 const eos_chain_options = {
