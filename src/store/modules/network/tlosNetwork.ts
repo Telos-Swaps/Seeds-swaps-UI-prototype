@@ -89,7 +89,7 @@ export class TlosNetworkModule
     maxPings?: number;
     interval?: number;
   }) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       for (let i = 0; i < maxPings; i++) {
         const newBalanceArray = await this.getBalances({
           tokens: originalBalances,
