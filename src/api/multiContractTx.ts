@@ -315,6 +315,16 @@ class MultiContractTx {
       }
     ]);
   }
+
+  tokenRedeem() {
+    return this.tx([
+      {
+        account: "test",
+        name: "transfer",
+        data: {},
+      }
+    ])
+  }
 }
 
 const getAuth: GetAuth = () => {

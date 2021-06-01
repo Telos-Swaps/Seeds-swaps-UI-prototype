@@ -24,7 +24,7 @@ export default class HeroWrapper extends Vue {}
 
 <style scoped lang="scss">
 .main {
-  min-height: 360px;
+    padding: 0 !important;
 }
 
 .slide-fade-up-enter-active {

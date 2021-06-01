@@ -89,7 +89,7 @@ export class TlosNetworkModule
     maxPings?: number;
     interval?: number;
   }) {
-    return new Promise(async (resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       for (let i = 0; i < maxPings; i++) {
         const newBalanceArray = await this.getBalances({
           tokens: originalBalances,
@@ -110,6 +110,12 @@ export class TlosNetworkModule
       }
       resolve();
     });
+  }
+
+  @action async redeem() {
+    if (!this.isAuthenticated) throw new Error("Not authenticated!");
+
+    await multiContract.tokenRedeem();
   }
 
   @action async transfer({ to, amount, id, memo }: TransferParam) {

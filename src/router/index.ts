@@ -2,12 +2,14 @@ import Vue from "vue";
 import Router from "vue-router";
 import Wallet from "@/views/Wallet.vue";
 import WalletAccount from "@/views/WalletAccount.vue";
+import Redeem from "@/views/Redeem.vue";
 import Tokens from "@/views/Tokens.vue";
 import Relays from "@/views/Relays.vue";
 import RelayDetail from "@/views/RelayDetail.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
 import HeroConvert from "@/components/hero/sub/HeroConvert.vue";
 import HeroTransfer from "@/components/hero/sub/HeroTransfer.vue";
+import HeroRedeem from "@/components/hero/sub/HeroRedeem.vue";
 import HeroRelay from "@/components/hero/sub/HeroRelay.vue";
 import HeroCreate from "@/components/hero/sub/HeroCreate.vue";
 import Navigation from "@/components/layout/Navigation.vue";
@@ -68,6 +70,16 @@ export const router = new Router({
         Hero: HeroTransfer
       },
       props: true
+    },
+    {
+      path: "/:service/redeem",
+      name: "Redeem",
+      components: {
+        Nav: Navigation,
+        Hero: HeroRedeem,
+        default: Redeem
+      },
+      props: false
     },
     {
       path: "/:service/wallet",
